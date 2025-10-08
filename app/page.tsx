@@ -1,55 +1,117 @@
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  ArrowRightIcon,
+  FileTextIcon,
+  CheckCircledIcon,
+} from "@radix-ui/react-icons";
 
 export default function HomeMenu() {
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-pretty text-3xl font-semibold">Pilih Mode</h1>
-          <p className="text-muted-foreground">
-            Mulai dengan mode penyusunan (Drafter) atau pemeriksa dokumen (Terminator)
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 py-12">
+      <div className="mx-auto max-w-4xl px-4">
+        {/* Header Section */}
+        <header className="mb-12 text-center">
+          <div className="mb-6 flex justify-center">
+            <Badge
+              variant="secondary"
+              className="rounded-full px-4 py-1 text-sm font-medium"
+            >
+              Beta
+            </Badge>
+          </div>
+          <h1 className="mb-4 text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
+            Pilih Mode
+          </h1>
+          <p className="mx-auto max-w-2xl text-lg text-slate-600 md:text-xl">
+            Mulai dengan mode penyusunan (Drafter) atau pemeriksa dokumen
+            (Terminator)
           </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Badge className="rounded-full px-3">Beta</Badge>
-          <Link href="/login" className="text-sm underline">
-            Login
-          </Link>
-        </div>
-      </header>
+        </header>
 
-      <section className="grid gap-6 md:grid-cols-2">
-        <Card className="border-muted/60 shadow-sm transition hover:shadow-md">
-          <CardHeader>
-            <CardTitle>Drafter</CardTitle>
-            <CardDescription>
-              Menyusun peraturan dengan template, auto-referencing, dan toolbar lengkap.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild className="w-full">
-              <Link href="/drafter">Mulai Drafter</Link>
-            </Button>
-          </CardContent>
-        </Card>
+        {/* Cards Section */}
+        <section className="grid gap-8 md:grid-cols-2">
+          {/* Drafter Card */}
+          <Card className="group relative overflow-hidden border-l-4 border-l-blue-500 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+            <div className="absolute right-4 top-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                <FileTextIcon className="h-5 w-5" />
+              </div>
+            </div>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-xl font-semibold text-slate-800">
+                Drafter
+              </CardTitle>
+              <CardDescription className="text-base text-slate-600">
+                Menyusun peraturan dengan template, auto-referencing, dan
+                toolbar lengkap.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                asChild
+                className="w-full gap-2 bg-blue-600 hover:bg-blue-700"
+              >
+                <Link href="/drafter">
+                  Mulai Drafter
+                  <ArrowRightIcon className="h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
 
-        <Card className="border-muted/60 shadow-sm transition hover:shadow-md">
-          <CardHeader>
-            <CardTitle>Terminator</CardTitle>
-            <CardDescription>
-              Unggah dokumen untuk cek kesalahan input: penomoran duplikat, referensi hilang, dan lainnya.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild variant="secondary" className="w-full">
-              <Link href="/terminator">Buka Terminator</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </section>
+          {/* Terminator Card */}
+          <Card className="group relative overflow-hidden border-l-4 border-l-green-500 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+            <div className="absolute right-4 top-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-600">
+                <CheckCircledIcon className="h-5 w-5" />
+              </div>
+            </div>
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-xl font-semibold text-slate-800">
+                Terminator
+              </CardTitle>
+              <CardDescription className="text-base text-slate-600">
+                Unggah dokumen untuk cek kesalahan input: penomoran duplikat,
+                referensi hilang, dan lainnya.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button
+                asChild
+                variant="secondary"
+                className="w-full gap-2 border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+              >
+                <Link href="/terminator">
+                  Buka Terminator
+                  <ArrowRightIcon className="h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </section>
+
+        {/* Footer */}
+        <footer className="mt-12 text-center">
+          <p className="text-sm text-slate-500">
+            Sudah memiliki akun?{" "}
+            <Link
+              href="/login"
+              className="font-medium text-blue-600 hover:text-blue-700 hover:underline"
+            >
+              Login di sini
+            </Link>
+          </p>
+        </footer>
+      </div>
     </main>
-  )
+  );
 }
