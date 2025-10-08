@@ -16,14 +16,14 @@ import {
 
 export default function HomeMenu() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30 py-12">
+    <main className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50/30 py-12">
       <div className="mx-auto max-w-4xl px-4">
         {/* Header Section */}
         <header className="mb-12 text-center">
           <div className="mb-6 flex justify-center">
             <Badge
               variant="secondary"
-              className="rounded-full px-4 py-1 text-sm font-medium"
+              className="rounded-full px-4 py-1 text-sm font-medium bg-orange-100 text-orange-700 border-orange-200"
             >
               Beta
             </Badge>
@@ -40,9 +40,9 @@ export default function HomeMenu() {
         {/* Cards Section */}
         <section className="grid gap-8 md:grid-cols-2">
           {/* Drafter Card */}
-          <Card className="group relative overflow-hidden border-l-4 border-l-blue-500 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+          <Card className="group relative overflow-hidden border-l-4 border-l-orange-500 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
             <div className="absolute right-4 top-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 text-orange-600">
                 <FileTextIcon className="h-5 w-5" />
               </div>
             </div>
@@ -58,7 +58,7 @@ export default function HomeMenu() {
             <CardContent>
               <Button
                 asChild
-                className="w-full gap-2 bg-blue-600 hover:bg-blue-700"
+                className="w-full gap-2 bg-orange-600 hover:bg-orange-700 text-white"
               >
                 <Link href="/drafter">
                   Mulai Drafter
@@ -69,9 +69,9 @@ export default function HomeMenu() {
           </Card>
 
           {/* Terminator Card */}
-          <Card className="group relative overflow-hidden border-l-4 border-l-green-500 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+          <Card className="group relative overflow-hidden border-l-4 border-l-orange-500 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
             <div className="absolute right-4 top-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-100 text-orange-600">
                 <CheckCircledIcon className="h-5 w-5" />
               </div>
             </div>
@@ -88,7 +88,7 @@ export default function HomeMenu() {
               <Button
                 asChild
                 variant="secondary"
-                className="w-full gap-2 border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                className="w-full gap-2 border border-orange-200 bg-orange-50 text-orange-700 hover:bg-orange-100 hover:text-orange-800"
               >
                 <Link href="/terminator">
                   Buka Terminator
@@ -105,7 +105,7 @@ export default function HomeMenu() {
             Sudah memiliki akun?{" "}
             <Link
               href="/login"
-              className="font-medium text-blue-600 hover:text-blue-700 hover:underline"
+              className="font-medium text-orange-600 hover:text-orange-700 hover:underline"
             >
               Login di sini
             </Link>
