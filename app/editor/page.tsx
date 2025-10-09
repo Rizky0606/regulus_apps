@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { EditorToolbar } from "@/components/toolbar";
 import { OutlineTree } from "@/components/outline-tree";
 import { ReferencePanel } from "@/components/reference-panel";
+import { ReferenceManager } from "@/components/reference-manager";
 import { RichEditor } from "@/components/rich-editor";
 import { TypoModal } from "@/components/typo-modal";
 import { Card } from "@/components/ui/card";
@@ -15,9 +16,10 @@ import { useEffect, useRef, useState } from "react";
 import { pdf } from "@react-pdf/renderer";
 import { MyDocument } from "@/components/pdf-document";
 import { toast } from "sonner";
-import { ArrowLeft, Home, User } from "lucide-react";
+import { User } from "lucide-react";
 import Image from "next/image";
 import LogoLPS from "@/assets/logo/logo-lps.png";
+import { SelectedReferences } from "@/types/references";
 
 // Define types untuk PDF content
 interface PdfTextItem {
@@ -72,7 +74,11 @@ export default function EditorPage() {
   const [fixToggle, setFixToggle] = useState(false);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [activeReference, setActiveReference] = useState<any | null>(null);
-  const [references, setReferences] = useState<any[]>([]);
+  const [selectedReferences, setSelectedReferences] =
+    useState<SelectedReferences>({
+      regulations: [],
+      definitions: [],
+    });
   const [editorContent, setEditorContent] = useState("");
 
   // State untuk modal typo
@@ -84,43 +90,25 @@ export default function EditorPage() {
 
   const editorRef = useRef<HTMLDivElement | null>(null);
 
+  // Load selected references dari localStorage
   useEffect(() => {
-    setReferences([
-      {
-        keyword: "investasi Pemerintah",
-        title: "UU No. 10 Tahun 1998",
-        year: "1998",
-        number: "10",
-        text: "Perubahan atas Undang-Undang tentang Perbankan.",
-        url: "https://peraturan.go.id/uu-10-1998",
-      },
-      {
-        keyword: "POJK",
-        title: "POJK No. 12/POJK.03/2021",
-        year: "2021",
-        number: "12",
-        text: "Tentang Bank Umum.",
-        url: "https://ojk.go.id/pojk-12-2021",
-      },
-    ]);
+    const savedRefs = localStorage.getItem("selected-references");
+    if (savedRefs) {
+      setSelectedReferences(JSON.parse(savedRefs));
+    }
   }, []);
 
+  // Save selected references ke localStorage ketika berubah
+  useEffect(() => {
+    localStorage.setItem(
+      "selected-references",
+      JSON.stringify(selectedReferences)
+    );
+  }, [selectedReferences]);
+
   const handleAddReference = async (newRef: any) => {
-    try {
-      const res = await fetch("/api/references", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newRef),
-      });
-      if (!res.ok) throw new Error("Gagal membuat referensi");
-      const saved = await res.json();
-      setReferences((prev) => [...prev, saved]);
-      setActiveReference(saved);
-      toast.success("Referensi berhasil ditambahkan.");
-    } catch (err) {
-      console.error("❌ Error tambah referensi:", err);
-      toast.error("Gagal menambah referensi.");
-    }
+    // Fungsi ini untuk ReferencePanel yang lama, bisa dipertahankan untuk kompatibilitas
+    toast.info("Gunakan Reference Manager untuk memilih referensi PDF");
   };
 
   // Fungsi untuk handle cek typo dari toolbar
@@ -380,10 +368,9 @@ export default function EditorPage() {
     }
   };
 
-  // ---------- HANDLE EXPORT PDF dengan @react-pdf/renderer ----------
+  // HANDLE EXPORT PDF dengan referensi yang dipilih
   const handleExportPDF = async () => {
     try {
-      // Ambil konten dari localStorage atau state
       const content =
         editorContent || localStorage.getItem("draft-editor") || "";
 
@@ -392,13 +379,13 @@ export default function EditorPage() {
         return;
       }
 
-      console.log("📝 Original HTML:", content);
-
       // Parse HTML content untuk PDF
       const parsedContent = parseHtmlToPdfContent(content);
 
-      // Buat PDF document
-      const blob = await pdf(<MyDocument content={parsedContent} />).toBlob();
+      // Buat PDF document dengan referensi yang dipilih
+      const blob = await pdf(
+        <MyDocument content={parsedContent} references={selectedReferences} />
+      ).toBlob();
 
       // Download PDF
       const url = URL.createObjectURL(blob);
@@ -410,33 +397,34 @@ export default function EditorPage() {
       document.body.removeChild(link);
 
       URL.revokeObjectURL(url);
-      toast.success("PDF berhasil diekspor!");
+
+      // Tampilkan summary referensi yang diexport
+      const totalRefs =
+        selectedReferences.definitions.length +
+        selectedReferences.regulations.length;
+      if (totalRefs > 0) {
+        toast.success(`PDF berhasil diekspor dengan ${totalRefs} referensi!`);
+      } else {
+        toast.success("PDF berhasil diekspor (tanpa referensi)");
+      }
     } catch (err) {
       console.error("❌ Gagal ekspor PDF:", err);
-      toast.error(
-        `Gagal mengekspor PDF: ${
-          err instanceof Error ? err.message : "Unknown error"
-        }`
-      );
+      toast.error("Gagal mengekspor PDF");
     }
   };
 
-  // Handler untuk update editor content
   const handleEditorChange = (content: string) => {
     setEditorContent(content);
   };
 
   return (
     <div className="min-h-screen bg-[#F7F7F7]">
-      {/* Header dengan Logo LPS seperti di Terminator App */}
+      {/* Header */}
       <header className="bg-white border-b border-[#A4A4A4] shadow-sm">
         <div className="max-w-full">
-          {/* Compact Header - Single Row */}
           <div className="px-6 py-3">
             <div className="flex items-center justify-between">
-              {/* Logo dan Brand Area */}
               <div className="flex items-center gap-4">
-                {/* Logo Container Persegi Panjang */}
                 <Link href="/">
                   <div className="bg-white rounded-lg border border-[#A4A4A4] shadow-sm p-3">
                     <Image
@@ -454,11 +442,7 @@ export default function EditorPage() {
                     />
                   </div>
                 </Link>
-
-                {/* Separator */}
                 <div className="h-8 w-px bg-[#A4A4A4]"></div>
-
-                {/* Brand Text */}
                 <div className="flex flex-col">
                   <h1 className="text-xl font-bold text-[#282828] leading-tight">
                     LD 1.0 - Aplikasi Penyusunan Peraturan
@@ -468,12 +452,7 @@ export default function EditorPage() {
                   </p>
                 </div>
               </div>
-
-              {/* Navigation dan User Profile */}
               <div className="flex items-center gap-4">
-                {/* Tombol Kembali */}
-
-                {/* User Profile */}
                 <div className="flex items-center gap-3">
                   <div className="text-right hidden sm:block">
                     <p className="text-sm font-semibold text-[#282828]">
@@ -590,12 +569,23 @@ export default function EditorPage() {
           </Card>
 
           {/* Panel Referensi */}
-          <Card className="md:col-span-3 p-4">
-            <ReferencePanel
-              reference={activeReference}
-              onAddReference={handleAddReference}
-            />
-          </Card>
+          <div className="md:col-span-3 space-y-4">
+            {/* Reference Manager untuk PDF */}
+            <Card className="p-4">
+              <ReferenceManager
+                selectedReferences={selectedReferences}
+                onReferencesChange={setSelectedReferences}
+              />
+            </Card>
+
+            {/* Reference Panel lama (opsional) */}
+            {/* <Card className="p-4">
+              <ReferencePanel
+                reference={activeReference}
+                onAddReference={handleAddReference}
+              />
+            </Card> */}
+          </div>
         </div>
 
         {/* Modal untuk menampilkan hasil cek typo */}
