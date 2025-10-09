@@ -223,14 +223,14 @@ export default function TerminatorApp() {
     // Tampilkan toast konfirmasi
     toast.custom(
       (t) => (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-w-sm">
+        <div className="bg-white border border-[#A4A4A4] rounded-lg shadow-lg p-4 max-w-sm">
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0 w-6 h-6 rounded-full bg-red-100 flex items-center justify-center">
               <Trash2 className="w-3 h-3 text-red-600" />
             </div>
             <div className="flex-1">
-              <h4 className="font-semibold text-gray-900 mb-1">Hapus Kata?</h4>
-              <p className="text-sm text-gray-600 mb-3">
+              <h4 className="font-semibold text-[#282828] mb-1">Hapus Kata?</h4>
+              <p className="text-sm text-[#A4A4A4] mb-3">
                 Anda akan menghapus kata{" "}
                 <span className="font-medium">"{word}"</span> →{" "}
                 <span className="font-medium">"{suggestion}"</span>
@@ -356,9 +356,9 @@ export default function TerminatorApp() {
   }, [searchTerm, corrections]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F7F7F7]">
       {/* Header dengan Logo Persegi Panjang yang Compact */}
-      <header className="bg-white border-b shadow-sm">
+      <header className="bg-white border-b border-[#A4A4A4] shadow-sm">
         <div className="max-w-full">
           {/* Compact Header - Single Row */}
           <div className="px-6 py-3">
@@ -367,7 +367,7 @@ export default function TerminatorApp() {
               <div className="flex items-center gap-4">
                 {/* Logo Container Persegi Panjang */}
                 <Link href="/">
-                  <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-3">
+                  <div className="bg-white rounded-lg border border-[#A4A4A4] shadow-sm p-3">
                     <Image
                       src={LogoLPS}
                       alt="LPS Logo"
@@ -385,14 +385,14 @@ export default function TerminatorApp() {
                 </Link>
 
                 {/* Separator */}
-                <div className="h-8 w-px bg-gray-300"></div>
+                <div className="h-8 w-px bg-[#A4A4A4]"></div>
 
                 {/* Brand Text */}
                 <div className="flex flex-col">
-                  <h1 className="text-xl font-bold text-gray-900 leading-tight">
+                  <h1 className="text-xl font-bold text-[#282828] leading-tight">
                     Terminator App
                   </h1>
-                  <p className="text-xs text-gray-500 leading-tight">
+                  <p className="text-xs text-[#A4A4A4] leading-tight">
                     Koreksi Dokumen Otomatis
                   </p>
                 </div>
@@ -403,13 +403,13 @@ export default function TerminatorApp() {
                 {/* User Profile */}
                 <div className="flex items-center gap-3">
                   <div className="text-right hidden sm:block">
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-sm font-semibold text-[#282828]">
                       Putri Amalia
                     </p>
-                    <p className="text-xs text-gray-500">Staf Pengembangan</p>
+                    <p className="text-xs text-[#A4A4A4]">Staf Pengembangan</p>
                   </div>
                   <div className="relative">
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-sm">
+                    <div className="w-8 h-8 bg-gradient-to-br from-[#DB8928] to-[#DB8928]/80 rounded-full flex items-center justify-center shadow-sm">
                       <User className="w-4 h-4 text-white" />
                     </div>
                     <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
@@ -423,27 +423,27 @@ export default function TerminatorApp() {
 
       <div className="flex max-w-full">
         {/* Sidebar yang Lebih Compact */}
-        <aside className="w-56 bg-white border-r min-h-[calc(100vh-80px)] p-4">
+        <aside className="w-56 bg-white border-r border-[#A4A4A4] min-h-[calc(100vh-80px)] p-4">
           <nav className="space-y-2">
             {/* Navigation Items */}
             <button
               onClick={() => setActiveTab("check")}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
                 activeTab === "check"
-                  ? "bg-orange-50 text-orange-600 border border-orange-200 shadow-sm"
-                  : "text-gray-700 hover:bg-gray-50 hover:border hover:border-gray-200"
+                  ? "bg-[#DB8928]/10 text-[#DB8928] border border-[#DB8928] shadow-sm"
+                  : "text-[#282828] hover:bg-[#F7F7F7] hover:border hover:border-[#A4A4A4]"
               }`}
             >
               <div
                 className={`p-1.5 rounded-md ${
-                  activeTab === "check" ? "bg-orange-100" : "bg-gray-100"
+                  activeTab === "check" ? "bg-[#DB8928]/20" : "bg-[#F7F7F7]"
                 }`}
               >
                 <FileText className="w-4 h-4" />
               </div>
               <div className="text-left">
                 <span className="font-medium text-sm block">Dokumen</span>
-                <span className="text-xs text-gray-500">Koreksi teks</span>
+                <span className="text-xs text-[#A4A4A4]">Koreksi teks</span>
               </div>
             </button>
 
@@ -451,39 +451,41 @@ export default function TerminatorApp() {
               onClick={() => setActiveTab("dictionary")}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all ${
                 activeTab === "dictionary"
-                  ? "bg-orange-50 text-orange-600 border border-orange-200 shadow-sm"
-                  : "text-gray-700 hover:bg-gray-50 hover:border hover:border-gray-200"
+                  ? "bg-[#DB8928]/10 text-[#DB8928] border border-[#DB8928] shadow-sm"
+                  : "text-[#282828] hover:bg-[#F7F7F7] hover:border hover:border-[#A4A4A4]"
               }`}
             >
               <div
                 className={`p-1.5 rounded-md ${
-                  activeTab === "dictionary" ? "bg-orange-100" : "bg-gray-100"
+                  activeTab === "dictionary"
+                    ? "bg-[#DB8928]/20"
+                    : "bg-[#F7F7F7]"
                 }`}
               >
                 <BookOpen className="w-4 h-4" />
               </div>
               <div className="text-left">
                 <span className="font-medium text-sm block">Kamus</span>
-                <span className="text-xs text-gray-500">Kata & Frasa</span>
+                <span className="text-xs text-[#A4A4A4]">Kata & Frasa</span>
               </div>
             </button>
           </nav>
 
           {/* Quick Stats - Lebih Compact */}
-          <div className="mt-6 p-3 bg-gray-50 rounded-lg border border-gray-200">
-            <h3 className="text-xs font-semibold text-gray-900 mb-2">
+          <div className="mt-6 p-3 bg-[#F7F7F7] rounded-lg border border-[#A4A4A4]">
+            <h3 className="text-xs font-semibold text-[#282828] mb-2">
               Statistik
             </h3>
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-600">Total Kata</span>
-                <span className="text-xs font-semibold text-gray-900">
+                <span className="text-xs text-[#A4A4A4]">Total Kata</span>
+                <span className="text-xs font-semibold text-[#282828]">
                   {corrections.length}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-xs text-gray-600">Dokumen Aktif</span>
-                <span className="text-xs font-semibold text-gray-900">
+                <span className="text-xs text-[#A4A4A4]">Dokumen Aktif</span>
+                <span className="text-xs font-semibold text-[#282828]">
                   {fileName ? 1 : 0}
                 </span>
               </div>
@@ -504,8 +506,8 @@ export default function TerminatorApp() {
                         <div
                           className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                             isUploading
-                              ? "bg-gray-400 cursor-not-allowed"
-                              : "bg-orange-500 hover:bg-orange-600 cursor-pointer"
+                              ? "bg-[#A4A4A4] cursor-not-allowed"
+                              : "bg-[#DB8928] hover:bg-[#DB8928]/90 cursor-pointer"
                           } text-white shadow-sm`}
                         >
                           <Upload className="w-4 h-4" />
@@ -522,7 +524,7 @@ export default function TerminatorApp() {
                         />
                       </label>
                       {fileName && (
-                        <Badge className="bg-orange-100 text-orange-800 border-orange-200 px-3 py-1">
+                        <Badge className="bg-[#DB8928]/10 text-[#DB8928] border-[#DB8928] px-3 py-1">
                           <FileText className="w-3 h-3 mr-1" />
                           {fileName}
                         </Badge>
@@ -531,10 +533,10 @@ export default function TerminatorApp() {
                   </div>
                 </div>
 
-                <Card className="h-[calc(100vh-180px)] border shadow-sm">
+                <Card className="h-[calc(100vh-180px)] border border-[#A4A4A4] shadow-sm">
                   <CardContent className="p-6 h-full flex flex-col">
                     <div className="mb-3 flex items-center justify-between">
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-[#A4A4A4]">
                         Halaman 1 dari 1 ·{" "}
                         {text.split(/\s+/).filter((w) => w).length} kata ·
                         Bahasa Indonesia
@@ -556,7 +558,7 @@ export default function TerminatorApp() {
                         {typoIssues.length > 0 && (
                           <Button
                             size="sm"
-                            className="bg-orange-500 hover:bg-orange-600 text-white shadow-sm"
+                            className="bg-[#DB8928] hover:bg-[#DB8928]/90 text-white shadow-sm"
                             onClick={applyAllSuggestions}
                           >
                             Ubah Semua
@@ -568,25 +570,25 @@ export default function TerminatorApp() {
                     {pdfUrl ? (
                       <iframe
                         src={pdfUrl}
-                        className="flex-1 w-full border rounded-lg shadow-inner"
+                        className="flex-1 w-full border border-[#A4A4A4] rounded-lg shadow-inner"
                         title="PDF Preview"
                       />
                     ) : text ? (
                       <div
-                        className="flex-1 p-4 border rounded-lg bg-white overflow-y-auto text-sm leading-relaxed shadow-inner"
+                        className="flex-1 p-4 border border-[#A4A4A4] rounded-lg bg-white overflow-y-auto text-sm leading-relaxed shadow-inner"
                         dangerouslySetInnerHTML={{ __html: highlightedText }}
                       />
                     ) : (
-                      <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl bg-gray-50/50">
+                      <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-[#A4A4A4] rounded-xl bg-[#F7F7F7]">
                         <div className="text-center p-8 w-full max-w-md mx-auto">
                           {/* Ikon dan teks */}
-                          <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Upload className="w-8 h-8 text-orange-500" />
+                          <div className="w-16 h-16 bg-[#DB8928]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Upload className="w-8 h-8 text-[#DB8928]" />
                           </div>
-                          <p className="text-gray-500 font-medium mb-2">
+                          <p className="text-[#A4A4A4] font-medium mb-2">
                             Unggah dokumen untuk memulai
                           </p>
-                          <p className="text-sm text-gray-400 mb-4">
+                          <p className="text-sm text-[#A4A4A4] mb-4">
                             Format: PDF, DOC, DOCX, TXT
                           </p>
 
@@ -595,7 +597,7 @@ export default function TerminatorApp() {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="flex items-center gap-2 mx-auto"
+                              className="flex items-center gap-2 mx-auto border-[#DB8928] text-[#DB8928] hover:bg-[#DB8928]/10"
                               onClick={triggerFileInput}
                             >
                               <Upload className="w-4 h-4" />
@@ -610,22 +612,22 @@ export default function TerminatorApp() {
               </div>
 
               {/* Recommendations Sidebar */}
-              <aside className="w-80 bg-white border-l p-6 overflow-y-auto h-[calc(100vh-80px)]">
+              <aside className="w-80 bg-white border-l border-[#A4A4A4] p-6 overflow-y-auto h-[calc(100vh-80px)]">
                 <div className="mb-4">
                   <div
                     className="flex items-center justify-between cursor-pointer mb-2"
                     onClick={() => setExpandedCorrection(!expandedCorrection)}
                   >
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900">
+                      <h3 className="text-lg font-bold text-[#282828]">
                         REKOMENDASI
                       </h3>
-                      <p className="text-sm text-gray-600">Usulan Perbaikan</p>
+                      <p className="text-sm text-[#A4A4A4]">Usulan Perbaikan</p>
                     </div>
                     <ChevronDown
                       className={`w-5 h-5 transition-transform ${
                         expandedCorrection ? "" : "rotate-180"
-                      } text-gray-400`}
+                      } text-[#A4A4A4]`}
                     />
                   </div>
                 </div>
@@ -637,10 +639,10 @@ export default function TerminatorApp() {
                         <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
                           <CheckCircle className="w-6 h-6 text-green-600" />
                         </div>
-                        <p className="text-gray-600 font-medium">
+                        <p className="text-[#A4A4A4] font-medium">
                           Tidak ada koreksi
                         </p>
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="text-sm text-[#A4A4A4] mt-1">
                           Dokumen terlihat baik
                         </p>
                       </div>
@@ -648,15 +650,15 @@ export default function TerminatorApp() {
                       typoIssues.map((issue, idx) => (
                         <div
                           key={idx}
-                          className="border border-gray-200 rounded-lg p-3 bg-white shadow-sm hover:shadow-md transition-shadow"
+                          className="border border-[#A4A4A4] rounded-lg p-3 bg-white shadow-sm hover:shadow-md transition-shadow"
                         >
                           <div className="flex items-start gap-3">
-                            <div className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                            <div className="w-6 h-6 rounded-full bg-[#DB8928] text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
                               {idx + 1}
                             </div>
                             <div className="flex-1">
                               <div className="mb-2">
-                                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                                <span className="text-xs text-[#A4A4A4] bg-[#F7F7F7] px-2 py-1 rounded">
                                   Koreksi kata/frasa
                                 </span>
                               </div>
@@ -664,12 +666,12 @@ export default function TerminatorApp() {
                                 <span className="text-red-600 line-through bg-red-50 px-1 rounded">
                                   {issue.original}
                                 </span>
-                                <span className="mx-2 text-gray-400">→</span>
+                                <span className="mx-2 text-[#A4A4A4]">→</span>
                                 <span className="text-green-600 bg-green-50 px-1 rounded">
                                   {issue.suggestion}
                                 </span>
                               </div>
-                              <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded mb-2 line-clamp-2 italic">
+                              <div className="text-xs text-[#A4A4A4] bg-[#F7F7F7] p-2 rounded mb-2 line-clamp-2 italic">
                                 {issue.context}
                               </div>
                               <Button
@@ -681,7 +683,7 @@ export default function TerminatorApp() {
                                     issue.suggestion
                                   )
                                 }
-                                className="h-7 text-xs border-blue-200 text-blue-700 hover:bg-blue-50"
+                                className="h-7 text-xs border-[#DB8928] text-[#DB8928] hover:bg-[#DB8928]/10"
                               >
                                 Terapkan
                               </Button>
@@ -694,9 +696,9 @@ export default function TerminatorApp() {
                 )}
 
                 {typoIssues.length > 0 && (
-                  <div className="mt-6 pt-4 border-t">
+                  <div className="mt-6 pt-4 border-t border-[#A4A4A4]">
                     <Button
-                      className="w-full bg-orange-500 hover:bg-orange-600 text-white shadow-sm mb-2"
+                      className="w-full bg-[#DB8928] hover:bg-[#DB8928]/90 text-white shadow-sm mb-2"
                       onClick={applyAllSuggestions}
                     >
                       Ubah Semua
@@ -704,7 +706,7 @@ export default function TerminatorApp() {
                     <Link href="/" className="block">
                       <Button
                         variant="outline"
-                        className="w-full flex items-center justify-center gap-2"
+                        className="w-full flex items-center justify-center gap-2 border-[#A4A4A4] text-[#282828] hover:bg-[#F7F7F7]"
                       >
                         <ArrowLeft className="w-4 h-4" />
                         Kembali ke Home
@@ -718,14 +720,14 @@ export default function TerminatorApp() {
             <div className="flex-1 p-6">
               <div className="mb-6">
                 <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                    <BookOpen className="w-5 h-5 text-orange-600" />
+                  <div className="w-10 h-10 bg-[#DB8928]/10 rounded-lg flex items-center justify-center">
+                    <BookOpen className="w-5 h-5 text-[#DB8928]" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900">
+                    <h2 className="text-2xl font-bold text-[#282828]">
                       Kamus Kata & Frasa
                     </h2>
-                    <p className="text-gray-600">
+                    <p className="text-[#A4A4A4]">
                       Kamus terpusat dari server. Semua perubahan akan disimpan
                       ke database.
                     </p>
@@ -740,14 +742,14 @@ export default function TerminatorApp() {
                       size="sm"
                       onClick={fetchDictionary}
                       disabled={isLoading}
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 border-[#A4A4A4] text-[#282828] hover:bg-[#F7F7F7]"
                     >
                       {isLoading ? "Memuat..." : "Refresh Data"}
                     </Button>
                   </div>
-                  <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                  <div className="text-sm text-[#A4A4A4] bg-[#F7F7F7] px-3 py-1 rounded-full">
                     Total:{" "}
-                    <span className="font-semibold text-gray-700">
+                    <span className="font-semibold text-[#282828]">
                       {corrections.length}
                     </span>{" "}
                     kata/frasa
@@ -755,15 +757,15 @@ export default function TerminatorApp() {
                 </div>
 
                 {/* Add New Word Form */}
-                <Card className="mb-6 border shadow-sm">
+                <Card className="mb-6 border border-[#A4A4A4] shadow-sm">
                   <CardContent className="p-6">
-                    <p className="text-sm font-medium text-gray-700 mb-4 flex items-center gap-2">
-                      <Plus className="w-4 h-4" />
+                    <p className="text-sm font-medium text-[#282828] mb-4 flex items-center gap-2">
+                      <Plus className="w-4 h-4 text-[#DB8928]" />
                       Tambah Kata Baru
                     </p>
                     <div className="flex gap-3">
                       <div className="flex-1">
-                        <label className="text-xs text-gray-500 mb-1 block">
+                        <label className="text-xs text-[#A4A4A4] mb-1 block">
                           Kata yang salah
                         </label>
                         <Input
@@ -775,7 +777,7 @@ export default function TerminatorApp() {
                         />
                       </div>
                       <div className="flex-1">
-                        <label className="text-xs text-gray-500 mb-1 block">
+                        <label className="text-xs text-[#A4A4A4] mb-1 block">
                           Koreksi yang benar
                         </label>
                         <Input
@@ -788,7 +790,7 @@ export default function TerminatorApp() {
                       </div>
                       <div className="flex items-end">
                         <Button
-                          className="bg-orange-500 hover:bg-orange-600 text-white shadow-sm"
+                          className="bg-[#DB8928] hover:bg-[#DB8928]/90 text-white shadow-sm"
                           onClick={addNewWord}
                           disabled={isAdding}
                         >
@@ -808,7 +810,7 @@ export default function TerminatorApp() {
 
                 {/* Search and List */}
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-gray-900">
+                  <h3 className="text-xl font-bold text-[#282828]">
                     Daftar Kata & Frasa
                   </h3>
                   <div className="relative">
@@ -817,29 +819,29 @@ export default function TerminatorApp() {
                       placeholder="Cari Kata..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="max-w-xs pl-9"
+                      className="max-w-xs pl-9 border-[#A4A4A4]"
                     />
-                    <BookOpen className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                    <BookOpen className="w-4 h-4 text-[#A4A4A4] absolute left-3 top-1/2 transform -translate-y-1/2" />
                   </div>
                 </div>
 
-                <Card className="border shadow-sm">
+                <Card className="border border-[#A4A4A4] shadow-sm">
                   <CardContent className="p-0">
-                    <div className="divide-y divide-gray-100">
+                    <div className="divide-y divide-[#F7F7F7]">
                       {isLoading ? (
                         <div className="p-12 text-center">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500 mx-auto mb-4"></div>
-                          <p className="text-gray-500 font-medium">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#DB8928] mx-auto mb-4"></div>
+                          <p className="text-[#A4A4A4] font-medium">
                             Memuat kamus...
                           </p>
                         </div>
                       ) : filteredCorrections.length === 0 ? (
                         <div className="p-12 text-center">
-                          <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                          <p className="text-gray-500 font-medium">
+                          <BookOpen className="w-16 h-16 text-[#A4A4A4] mx-auto mb-4" />
+                          <p className="text-[#A4A4A4] font-medium">
                             Tidak ada kata ditemukan
                           </p>
-                          <p className="text-sm text-gray-400 mt-1">
+                          <p className="text-sm text-[#A4A4A4] mt-1">
                             {searchTerm
                               ? "Coba kata kunci lain"
                               : "Tambahkan kata baru di atas"}
@@ -849,20 +851,20 @@ export default function TerminatorApp() {
                         filteredCorrections.map((correction, idx) => (
                           <div
                             key={correction.id}
-                            className="p-4 hover:bg-gray-50 flex items-center justify-between group transition-colors"
+                            className="p-4 hover:bg-[#F7F7F7] flex items-center justify-between group transition-colors"
                           >
                             <div className="flex-1">
                               <div className="flex items-center gap-3 mb-1">
-                                <span className="font-semibold text-gray-900 bg-blue-50 px-2 py-1 rounded text-sm">
+                                <span className="font-semibold text-[#282828] bg-[#DB8928]/10 px-2 py-1 rounded text-sm">
                                   {correction.word}
                                 </span>
-                                <span className="text-gray-400">→</span>
-                                <span className="text-gray-700 font-medium">
+                                <span className="text-[#A4A4A4]">→</span>
+                                <span className="text-[#282828] font-medium">
                                   {correction.suggestion}
                                 </span>
                               </div>
                               {correction.meta?.note && (
-                                <p className="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded inline-block">
+                                <p className="text-xs text-[#A4A4A4] bg-[#F7F7F7] px-2 py-1 rounded inline-block">
                                   {correction.meta.note}
                                 </p>
                               )}

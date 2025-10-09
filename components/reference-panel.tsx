@@ -314,11 +314,13 @@ export function ReferencePanel({
 
   return (
     <div className="space-y-4">
-      <h2 className="font-semibold text-lg">📎 Referensi</h2>
+      <h2 className="font-semibold text-lg text-[#282828]">📎 Referensi</h2>
 
       {/* REFERENSI PERATURAN */}
-      <div className="border rounded-md p-3 bg-gray-50">
-        <h3 className="font-medium text-sm mb-2">Referensi Peraturan</h3>
+      <div className="border border-[#A4A4A4] rounded-md p-3 bg-[#F7F7F7]">
+        <h3 className="font-medium text-sm mb-2 text-[#282828]">
+          Referensi Peraturan
+        </h3>
 
         {!showRefForm ? (
           <>
@@ -326,23 +328,23 @@ export function ReferencePanel({
               <Button
                 onClick={() => setShowRegModal(true)}
                 variant="outline"
-                className="flex-1 text-sm"
+                className="flex-1 text-sm border-[#DB8928] text-[#DB8928] hover:bg-[#DB8928]/10"
               >
                 🔍 Cari Peraturan
               </Button>
             </div>
-            <Button
+            {/* <Button
               variant="outline"
               onClick={() => setShowRefForm(true)}
-              className="w-full text-sm"
+              className="w-full text-sm border-[#DB8928] text-[#DB8928] hover:bg-[#DB8928]/10"
             >
               + Tambah Referensi Manual
-            </Button>
-            {reference && (
-              <ul className="mt-3 list-disc ml-5 text-sm text-gray-700 space-y-1">
+            </Button> */}
+            {/* {reference && (
+              <ul className="mt-3 list-disc ml-5 text-sm text-[#282828] space-y-1">
                 <li>{reference.title}</li>
               </ul>
-            )}
+            )} */}
           </>
         ) : (
           <form onSubmit={handleRefSubmit} className="space-y-2 mt-2">
@@ -353,6 +355,7 @@ export function ReferencePanel({
                 setRefForm({ ...refForm, title: e.target.value })
               }
               required
+              className="border-[#A4A4A4] focus:border-[#DB8928]"
             />
             <Input
               placeholder="Nomor Peraturan"
@@ -361,33 +364,40 @@ export function ReferencePanel({
                 setRefForm({ ...refForm, number: e.target.value })
               }
               required
+              className="border-[#A4A4A4] focus:border-[#DB8928]"
             />
             <Input
               placeholder="Tahun Peraturan"
               value={refForm.year}
               onChange={(e) => setRefForm({ ...refForm, year: e.target.value })}
               required
+              className="border-[#A4A4A4] focus:border-[#DB8928]"
             />
             <Textarea
               placeholder="Teks Peraturan"
               value={refForm.text}
               onChange={(e) => setRefForm({ ...refForm, text: e.target.value })}
               required
+              className="border-[#A4A4A4] focus:border-[#DB8928]"
             />
             <Input
               placeholder="URL Peraturan"
               value={refForm.url}
               onChange={(e) => setRefForm({ ...refForm, url: e.target.value })}
+              className="border-[#A4A4A4] focus:border-[#DB8928]"
             />
             <div className="flex gap-2">
-              <Button type="submit" className="flex-1">
+              <Button
+                type="submit"
+                className="flex-1 bg-[#DB8928] hover:bg-[#DB8928]/90 text-white"
+              >
                 Simpan
               </Button>
               <Button
                 variant="outline"
                 type="button"
                 onClick={() => setShowRefForm(false)}
-                className="flex-1"
+                className="flex-1 border-[#A4A4A4] text-[#282828] hover:bg-[#F7F7F7]"
               >
                 Batal
               </Button>
@@ -397,14 +407,16 @@ export function ReferencePanel({
       </div>
 
       {/* REFERENSI DEFINISI */}
-      <div className="border rounded-md p-3 bg-gray-50">
-        <h3 className="font-medium text-sm mb-2">Referensi Definisi</h3>
+      <div className="border border-[#A4A4A4] rounded-md p-3 bg-[#F7F7F7]">
+        <h3 className="font-medium text-sm mb-2 text-[#282828]">
+          Referensi Definisi
+        </h3>
 
         <div className="flex gap-2">
           <Button
             onClick={() => setShowDefModal(true)}
             variant="outline"
-            className="flex-1 text-sm"
+            className="flex-1 text-sm border-[#DB8928] text-[#DB8928] hover:bg-[#DB8928]/10"
           >
             🔍 Cari Definisi
           </Button>
@@ -412,16 +424,21 @@ export function ReferencePanel({
       </div>
 
       {/* KOMENTAR */}
-      <div className="border rounded-md p-3 bg-gray-50">
-        <h3 className="font-medium text-sm mb-2">Komentar</h3>
-        <Textarea placeholder="Tambahkan komentar..." className="text-sm" />
+      <div className="border border-[#A4A4A4] rounded-md p-3 bg-[#F7F7F7]">
+        <h3 className="font-medium text-sm mb-2 text-[#282828]">Komentar</h3>
+        <Textarea
+          placeholder="Tambahkan komentar..."
+          className="text-sm border-[#A4A4A4] focus:border-[#DB8928]"
+        />
       </div>
 
       {/* MODAL PENCARIAN DEFINISI */}
       <Dialog open={showDefModal} onOpenChange={setShowDefModal}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col border border-[#A4A4A4]">
           <DialogHeader>
-            <DialogTitle>Cari Referensi Definisi</DialogTitle>
+            <DialogTitle className="text-[#282828]">
+              Cari Referensi Definisi
+            </DialogTitle>
           </DialogHeader>
 
           {/* Form Pencarian Definisi */}
@@ -430,9 +447,13 @@ export function ReferencePanel({
               placeholder="Masukkan kata kunci istilah (minimal 2 huruf)..."
               value={defTerm}
               onChange={(e) => setDefTerm(e.target.value)}
-              className="flex-1"
+              className="flex-1 border-[#A4A4A4] focus:border-[#DB8928]"
             />
-            <Button type="submit" disabled={defLoading}>
+            <Button
+              type="submit"
+              disabled={defLoading}
+              className="bg-[#DB8928] hover:bg-[#DB8928]/90 text-white"
+            >
               {defLoading ? "Mencari..." : "Cari"}
             </Button>
             {defTerm && (
@@ -440,6 +461,7 @@ export function ReferencePanel({
                 type="button"
                 variant="outline"
                 onClick={handleResetDefinitionSearch}
+                className="border-[#A4A4A4] text-[#282828] hover:bg-[#F7F7F7]"
               >
                 Reset
               </Button>
@@ -449,30 +471,30 @@ export function ReferencePanel({
           {/* Hasil Pencarian Definisi */}
           <div className="flex-1 overflow-y-auto space-y-3 mt-4">
             <div className="flex justify-between items-center">
-              <h3 className="font-semibold text-sm">
+              <h3 className="font-semibold text-sm text-[#282828]">
                 {defTerm ? `Hasil Pencarian: "${defTerm}"` : "Semua Definisi"}
               </h3>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-[#A4A4A4]">
                 {defResults.length} hasil ditemukan
               </span>
             </div>
 
             {defLoading ? (
               <div className="text-center py-8">
-                <p className="text-sm text-gray-500">Memuat data...</p>
+                <p className="text-sm text-[#A4A4A4]">Memuat data...</p>
               </div>
             ) : defResults.length > 0 ? (
               defResults.map((item, i) => (
                 <div
                   key={i}
-                  className="p-4 border rounded-md bg-white hover:bg-gray-50 transition"
+                  className="p-4 border border-[#A4A4A4] rounded-md bg-white hover:bg-[#F7F7F7] transition"
                 >
                   <div className="flex justify-between items-start gap-4">
                     <div className="flex-1">
-                      <p className="font-medium text-sm text-blue-600 mb-2">
+                      <p className="font-medium text-sm text-[#DB8928] mb-2">
                         {item.term}
                       </p>
-                      <p className="text-sm text-gray-700 leading-relaxed">
+                      <p className="text-sm text-[#282828] leading-relaxed">
                         {item.meaning}
                       </p>
                     </div>
@@ -480,7 +502,7 @@ export function ReferencePanel({
                       <Button
                         size="sm"
                         variant="default"
-                        className="text-xs cursor-pointer whitespace-nowrap bg-green-600 hover:bg-green-700 text-white"
+                        className="text-xs cursor-pointer whitespace-nowrap bg-[#DB8928] hover:bg-[#DB8928]/90 text-white"
                         onClick={() => handleInsertDefinition(item)}
                       >
                         Tempel ke Editor
@@ -488,7 +510,7 @@ export function ReferencePanel({
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-xs cursor-pointer whitespace-nowrap"
+                        className="text-xs cursor-pointer whitespace-nowrap border-[#A4A4A4] text-[#282828] hover:bg-[#F7F7F7]"
                         onClick={() => handleCopyDefinition(item.meaning)}
                       >
                         Copy
@@ -496,7 +518,7 @@ export function ReferencePanel({
                       {/* <Button
                         size="sm"
                         variant="outline"
-                        className="text-xs cursor-pointer whitespace-nowrap"
+                        className="text-xs cursor-pointer whitespace-nowrap border-[#A4A4A4] text-[#282828] hover:bg-[#F7F7F7]"
                         onClick={() => handleSelectDefinition(item)}
                       >
                         Pilih sebagai Referensi
@@ -507,7 +529,7 @@ export function ReferencePanel({
               ))
             ) : (
               <div className="text-center py-8">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-[#A4A4A4]">
                   {defTerm
                     ? "Tidak ditemukan hasil definisi."
                     : "Belum ada data definisi."}
@@ -517,7 +539,11 @@ export function ReferencePanel({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDefModal(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowDefModal(false)}
+              className="border-[#A4A4A4] text-[#282828] hover:bg-[#F7F7F7]"
+            >
               Tutup
             </Button>
           </DialogFooter>
@@ -526,9 +552,11 @@ export function ReferencePanel({
 
       {/* MODAL PENCARIAN PERATURAN */}
       <Dialog open={showRegModal} onOpenChange={setShowRegModal}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col border border-[#A4A4A4]">
           <DialogHeader>
-            <DialogTitle>Cari Referensi Peraturan</DialogTitle>
+            <DialogTitle className="text-[#282828]">
+              Cari Referensi Peraturan
+            </DialogTitle>
           </DialogHeader>
 
           {/* Form Pencarian Peraturan */}
@@ -537,9 +565,13 @@ export function ReferencePanel({
               placeholder="Masukkan kata kunci peraturan (minimal 2 huruf)..."
               value={regTerm}
               onChange={(e) => setRegTerm(e.target.value)}
-              className="flex-1"
+              className="flex-1 border-[#A4A4A4] focus:border-[#DB8928]"
             />
-            <Button type="submit" disabled={regLoading}>
+            <Button
+              type="submit"
+              disabled={regLoading}
+              className="bg-[#DB8928] hover:bg-[#DB8928]/90 text-white"
+            >
               {regLoading ? "Mencari..." : "Cari"}
             </Button>
             {regTerm && (
@@ -547,6 +579,7 @@ export function ReferencePanel({
                 type="button"
                 variant="outline"
                 onClick={handleResetRegulationSearch}
+                className="border-[#A4A4A4] text-[#282828] hover:bg-[#F7F7F7]"
               >
                 Reset
               </Button>
@@ -556,42 +589,42 @@ export function ReferencePanel({
           {/* Hasil Pencarian Peraturan */}
           <div className="flex-1 overflow-y-auto space-y-3 mt-4">
             <div className="flex justify-between items-center">
-              <h3 className="font-semibold text-sm">
+              <h3 className="font-semibold text-sm text-[#282828]">
                 {regTerm ? `Hasil Pencarian: "${regTerm}"` : "Semua Peraturan"}
               </h3>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-[#A4A4A4]">
                 {regResults.length} hasil ditemukan
               </span>
             </div>
 
             {regLoading ? (
               <div className="text-center py-8">
-                <p className="text-sm text-gray-500">Memuat data...</p>
+                <p className="text-sm text-[#A4A4A4]">Memuat data...</p>
               </div>
             ) : regResults.length > 0 ? (
               regResults.map((regulation, i) => (
                 <div
                   key={regulation.id}
-                  className="p-4 border rounded-md bg-white hover:bg-gray-50 transition"
+                  className="p-4 border border-[#A4A4A4] rounded-md bg-white hover:bg-[#F7F7F7] transition"
                 >
                   <div className="flex justify-between items-start gap-4 mb-3">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-sm text-green-700 mb-1">
+                      <h4 className="font-semibold text-sm text-[#282828] mb-1">
                         {formatRegulationTitle(regulation)}
                       </h4>
-                      <p className="text-xs text-gray-500 mb-2">
+                      <p className="text-xs text-[#A4A4A4] mb-2">
                         {regulation.url && (
                           <a
                             href={regulation.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-500 hover:underline break-all"
+                            className="text-[#DB8928] hover:underline break-all"
                           >
                             {regulation.url}
                           </a>
                         )}
                       </p>
-                      <p className="text-sm text-gray-700 leading-relaxed line-clamp-3">
+                      <p className="text-sm text-[#282828] leading-relaxed line-clamp-3">
                         {regulation.text}
                       </p>
                     </div>
@@ -599,7 +632,7 @@ export function ReferencePanel({
                       <Button
                         size="sm"
                         variant="default"
-                        className="text-xs cursor-pointer whitespace-nowrap bg-green-600 hover:bg-green-700 text-white"
+                        className="text-xs cursor-pointer whitespace-nowrap bg-[#DB8928] hover:bg-[#DB8928]/90 text-white"
                         onClick={() => handleInsertRegulation(regulation)}
                       >
                         Tempel ke Editor
@@ -607,7 +640,7 @@ export function ReferencePanel({
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-xs cursor-pointer whitespace-nowrap"
+                        className="text-xs cursor-pointer whitespace-nowrap border-[#A4A4A4] text-[#282828] hover:bg-[#F7F7F7]"
                         onClick={() => handleCopyRegulation(regulation.text)}
                       >
                         Copy Teks
@@ -615,7 +648,7 @@ export function ReferencePanel({
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-xs cursor-pointer whitespace-nowrap"
+                        className="text-xs cursor-pointer whitespace-nowrap border-[#A4A4A4] text-[#282828] hover:bg-[#F7F7F7]"
                         onClick={() => handleCopyRegulationTitle(regulation)}
                       >
                         Copy Judul
@@ -623,14 +656,14 @@ export function ReferencePanel({
                       {/* <Button
                         size="sm"
                         variant="outline"
-                        className="text-xs cursor-pointer whitespace-nowrap"
+                        className="text-xs cursor-pointer whitespace-nowrap border-[#A4A4A4] text-[#282828] hover:bg-[#F7F7F7]"
                         onClick={() => handleSelectRegulation(regulation)}
                       >
                         Pilih sebagai Referensi
                       </Button> */}
                     </div>
                   </div>
-                  <div className="text-xs text-gray-400 mt-2">
+                  <div className="text-xs text-[#A4A4A4] mt-2">
                     Diperbarui:{" "}
                     {new Date(regulation.updatedAt).toLocaleDateString("id-ID")}
                   </div>
@@ -638,7 +671,7 @@ export function ReferencePanel({
               ))
             ) : (
               <div className="text-center py-8">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-[#A4A4A4]">
                   {regTerm
                     ? "Tidak ditemukan hasil peraturan."
                     : "Belum ada data peraturan."}
@@ -648,7 +681,11 @@ export function ReferencePanel({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowRegModal(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowRegModal(false)}
+              className="border-[#A4A4A4] text-[#282828] hover:bg-[#F7F7F7]"
+            >
               Tutup
             </Button>
           </DialogFooter>

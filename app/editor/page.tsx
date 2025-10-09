@@ -427,9 +427,9 @@ export default function EditorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F7F7F7]">
       {/* Header dengan Logo LPS seperti di Terminator App */}
-      <header className="bg-white border-b shadow-sm">
+      <header className="bg-white border-b border-[#A4A4A4] shadow-sm">
         <div className="max-w-full">
           {/* Compact Header - Single Row */}
           <div className="px-6 py-3">
@@ -438,7 +438,7 @@ export default function EditorPage() {
               <div className="flex items-center gap-4">
                 {/* Logo Container Persegi Panjang */}
                 <Link href="/">
-                  <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-3">
+                  <div className="bg-white rounded-lg border border-[#A4A4A4] shadow-sm p-3">
                     <Image
                       src={LogoLPS}
                       alt="LPS Logo"
@@ -456,14 +456,14 @@ export default function EditorPage() {
                 </Link>
 
                 {/* Separator */}
-                <div className="h-8 w-px bg-gray-300"></div>
+                <div className="h-8 w-px bg-[#A4A4A4]"></div>
 
                 {/* Brand Text */}
                 <div className="flex flex-col">
-                  <h1 className="text-xl font-bold text-gray-900 leading-tight">
+                  <h1 className="text-xl font-bold text-[#282828] leading-tight">
                     LD 1.0 - Aplikasi Penyusunan Peraturan
                   </h1>
-                  <p className="text-xs text-gray-500 leading-tight">
+                  <p className="text-xs text-[#A4A4A4] leading-tight">
                     Jenis: {jenis}
                   </p>
                 </div>
@@ -476,13 +476,13 @@ export default function EditorPage() {
                 {/* User Profile */}
                 <div className="flex items-center gap-3">
                   <div className="text-right hidden sm:block">
-                    <p className="text-sm font-semibold text-gray-900">
+                    <p className="text-sm font-semibold text-[#282828]">
                       Putri Amalia
                     </p>
-                    <p className="text-xs text-gray-500">Staf Pengembangan</p>
+                    <p className="text-xs text-[#A4A4A4]">Staf Pengembangan</p>
                   </div>
                   <div className="relative">
-                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-sm">
+                    <div className="w-8 h-8 bg-gradient-to-br from-[#DB8928] to-[#DB8928]/80 rounded-full flex items-center justify-center shadow-sm">
                       <User className="w-4 h-4 text-white" />
                     </div>
                     <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
@@ -512,6 +512,7 @@ export default function EditorPage() {
                 setSavedAt(new Date());
                 toast.success("Draft berhasil disimpan.");
               }}
+              className="bg-[#DB8928] hover:bg-[#DB8928]/90 text-white"
             >
               Simpan
             </Button>
@@ -533,7 +534,7 @@ export default function EditorPage() {
 
             <Button
               variant="default"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white"
+              className="bg-[#282828] hover:bg-[#282828]/90 text-white"
               onClick={handleExportPDF}
             >
               Ekspor PDF
@@ -546,13 +547,15 @@ export default function EditorPage() {
         {/* Layout utama */}
         <div className="grid gap-4 md:grid-cols-12">
           {/* Struktur Dokumen */}
-          <Card className="md:col-span-3 p-4 bg-gradient-to-b from-sky-50 to-white">
-            <h2 className="font-semibold text-lg mb-3">📘 Struktur Dokumen</h2>
+          <Card className="md:col-span-3 p-4 bg-gradient-to-b from-[#F7F7F7] to-white">
+            <h2 className="font-semibold text-lg mb-3 text-[#282828]">
+              📘 Struktur Dokumen
+            </h2>
             <OutlineTree nodes={outline} />
             <div className="mt-6 space-y-3">
               <Button
                 variant="secondary"
-                className="w-full bg-rose-200 text-rose-900 hover:bg-rose-300"
+                className="w-full bg-[#DB8928]/10 text-[#DB8928] hover:bg-[#DB8928]/20 border-[#DB8928]"
               >
                 Auto Referencing
               </Button>
@@ -563,13 +566,13 @@ export default function EditorPage() {
           <Card className="md:col-span-6 p-4" ref={editorRef}>
             <style jsx global>{`
               .ql-editor {
-                color: black !important;
+                color: #282828 !important;
               }
               .ql-container .ql-editor p,
               .ql-container .ql-editor h1,
               .ql-container .ql-editor h2,
               .ql-container .ql-editor h3 {
-                color: black !important;
+                color: #282828 !important;
               }
             `}</style>
             <RichEditor
@@ -581,7 +584,7 @@ export default function EditorPage() {
               savedAt={savedAt}
               onChange={handleEditorChange}
             />
-            <div className="mt-3 text-xs text-gray-400 border-t pt-2">
+            <div className="mt-3 text-xs text-[#A4A4A4] border-t border-[#F7F7F7] pt-2">
               ✏️ Draft terakhir disimpan otomatis 2 menit lalu.
             </div>
           </Card>
