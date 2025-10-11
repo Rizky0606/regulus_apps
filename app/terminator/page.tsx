@@ -45,6 +45,14 @@ interface ApiResponse {
   data: Correction[];
 }
 
+interface UploadResponse {
+  success: boolean;
+  data: {
+    pdfUrl: string;
+    corrections: Correction[];
+  };
+}
+
 interface TypoIssue {
   type: "typo";
   original: string;
@@ -89,6 +97,7 @@ export default function TerminatorApp() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [apiCorrections, setApiCorrections] = useState<Correction[]>([]);
 
   // Dictionary management - hanya dari backend
   const [dictionary, setDictionary] = useState<Record<string, string>>({});
@@ -289,14 +298,52 @@ export default function TerminatorApp() {
     setUploadedFile(file);
     setIsUploading(true);
 
-    if (fileExt === ".pdf") {
-      const url = URL.createObjectURL(file);
-      setPdfUrl(url);
-    }
+    try {
+      // Prepare form data
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("name", "Test Document"); // You can modify this as needed
 
-    // Untuk demo, kita hanya handle PDF preview
-    setIsUploading(false);
-    toast.success("Dokumen berhasil diunggah");
+      // Upload file to API
+      const response = await fetch(
+        "https://terminator-production-46a6.up.railway.app/api/docs/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const result: UploadResponse = await response.json();
+
+      if (result.success) {
+        // Set PDF URL by combining base URL with pdfUrl from response
+        const fullPdfUrl = `https://terminator-production-46a6.up.railway.app${result.data.pdfUrl}`;
+        setPdfUrl(fullPdfUrl);
+        
+        // Set corrections from API response
+        setApiCorrections(result.data.corrections);
+        
+        toast.success("Dokumen berhasil diunggah dan diproses");
+      } else {
+        throw new Error("Upload failed");
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      toast.error("Gagal mengunggah dokumen");
+      
+      // Fallback to local file preview for PDF
+      if (fileExt === ".pdf") {
+        const url = URL.createObjectURL(file);
+        setPdfUrl(url);
+        toast.info("Menggunakan preview lokal (tanpa koreksi API)");
+      }
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // Fungsi untuk trigger file input
@@ -550,6 +597,7 @@ export default function TerminatorApp() {
                             setFileName(null);
                             setPdfUrl(null);
                             setUploadedFile(null);
+                            setApiCorrections([]);
                             toast.info("Dokumen telah dibersihkan");
                           }}
                         >
@@ -634,7 +682,7 @@ export default function TerminatorApp() {
 
                 {expandedCorrection && (
                   <div className="space-y-3">
-                    {typoIssues.length === 0 ? (
+                    {apiCorrections.length === 0 && typoIssues.length === 0 ? (
                       <div className="flex flex-col items-center justify-center py-12 text-center">
                         <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
                           <CheckCircle className="w-6 h-6 text-green-600" />
@@ -647,61 +695,110 @@ export default function TerminatorApp() {
                         </p>
                       </div>
                     ) : (
-                      typoIssues.map((issue, idx) => (
-                        <div
-                          key={idx}
-                          className="border border-[#A4A4A4] rounded-lg p-3 bg-white shadow-sm hover:shadow-md transition-shadow"
-                        >
-                          <div className="flex items-start gap-3">
-                            <div className="w-6 h-6 rounded-full bg-[#DB8928] text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
-                              {idx + 1}
-                            </div>
-                            <div className="flex-1">
-                              <div className="mb-2">
-                                <span className="text-xs text-[#A4A4A4] bg-[#F7F7F7] px-2 py-1 rounded">
-                                  Koreksi kata/frasa
-                                </span>
+                      <>
+                        {/* Display API Corrections */}
+                        {apiCorrections.map((correction, idx) => (
+                          <div
+                            key={correction.id}
+                            className="border border-[#A4A4A4] rounded-lg p-3 bg-white shadow-sm hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="w-6 h-6 rounded-full bg-[#DB8928] text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                                {idx + 1}
                               </div>
-                              <div className="font-medium text-sm mb-2">
-                                <span className="text-red-600 line-through bg-red-50 px-1 rounded">
-                                  {issue.original}
-                                </span>
-                                <span className="mx-2 text-[#A4A4A4]">→</span>
-                                <span className="text-green-600 bg-green-50 px-1 rounded">
-                                  {issue.suggestion}
-                                </span>
+                              <div className="flex-1">
+                                <div className="mb-2">
+                                  <span className="text-xs text-[#A4A4A4] bg-[#F7F7F7] px-2 py-1 rounded">
+                                    Koreksi kata/frasa
+                                  </span>
+                                </div>
+                                <div className="font-medium text-sm mb-2">
+                                  <span className="text-red-600 line-through bg-red-50 px-1 rounded">
+                                    {correction.word}
+                                  </span>
+                                  <span className="mx-2 text-[#A4A4A4]">→</span>
+                                  <span className="text-green-600 bg-green-50 px-1 rounded">
+                                    {correction.suggestion}
+                                  </span>
+                                </div>
+                                <div className="text-xs text-[#A4A4A4] bg-[#F7F7F7] p-2 rounded mb-2 line-clamp-2 italic">
+                                  Sumber: {correction.source}
+                                </div>
+                                {/* <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() =>
+                                    applySuggestion(
+                                      correction.word,
+                                      correction.suggestion
+                                    )
+                                  }
+                                  className="h-7 text-xs border-[#DB8928] text-[#DB8928] hover:bg-[#DB8928]/10"
+                                >
+                                  Terapkan
+                                </Button> */}
                               </div>
-                              <div className="text-xs text-[#A4A4A4] bg-[#F7F7F7] p-2 rounded mb-2 line-clamp-2 italic">
-                                {issue.context}
-                              </div>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  applySuggestion(
-                                    issue.original,
-                                    issue.suggestion
-                                  )
-                                }
-                                className="h-7 text-xs border-[#DB8928] text-[#DB8928] hover:bg-[#DB8928]/10"
-                              >
-                                Terapkan
-                              </Button>
                             </div>
                           </div>
-                        </div>
-                      ))
+                        ))}
+
+                        {/* Display Local Typo Issues */}
+                        {typoIssues.map((issue, idx) => (
+                          <div
+                            key={`local-${idx}`}
+                            className="border border-[#A4A4A4] rounded-lg p-3 bg-white shadow-sm hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+                                {apiCorrections.length + idx + 1}
+                              </div>
+                              <div className="flex-1">
+                                <div className="mb-2">
+                                  <span className="text-xs text-[#A4A4A4] bg-[#F7F7F7] px-2 py-1 rounded">
+                                    Koreksi lokal
+                                  </span>
+                                </div>
+                                <div className="font-medium text-sm mb-2">
+                                  <span className="text-red-600 line-through bg-red-50 px-1 rounded">
+                                    {issue.original}
+                                  </span>
+                                  <span className="mx-2 text-[#A4A4A4]">→</span>
+                                  <span className="text-green-600 bg-green-50 px-1 rounded">
+                                    {issue.suggestion}
+                                  </span>
+                                </div>
+                                <div className="text-xs text-[#A4A4A4] bg-[#F7F7F7] p-2 rounded mb-2 line-clamp-2 italic">
+                                  {issue.context}
+                                </div>
+                                {/* <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() =>
+                                    applySuggestion(
+                                      issue.original,
+                                      issue.suggestion
+                                    )
+                                  }
+                                  className="h-7 text-xs border-[#DB8928] text-[#DB8928] hover:bg-[#DB8928]/10"
+                                >
+                                  Terapkan
+                                </Button> */}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </>
                     )}
                   </div>
                 )}
 
-                {typoIssues.length > 0 && (
+                {/* {(apiCorrections.length > 0 || typoIssues.length > 0) && (
                   <div className="mt-6 pt-4 border-t border-[#A4A4A4]">
                     <Button
                       className="w-full bg-[#DB8928] hover:bg-[#DB8928]/90 text-white shadow-sm mb-2"
                       onClick={applyAllSuggestions}
                     >
-                      Ubah Semua
+                      Ubah Semua ({apiCorrections.length + typoIssues.length})
                     </Button>
                     <Link href="/" className="block">
                       <Button
@@ -713,7 +810,7 @@ export default function TerminatorApp() {
                       </Button>
                     </Link>
                   </div>
-                )}
+                )} */}
               </aside>
             </>
           ) : (

@@ -388,8 +388,7 @@ const DefinitionsRenderer = ({
 
       {definitions.map((def, index) => (
         <View key={`def-${def.id}-${index}`} style={styles.definitionItem}>
-          <Text style={styles.definitionTerm}>{def.term}:</Text>
-          <Text style={styles.definitionMeaning}>{def.meaning}</Text>
+          <Text style={styles.definitionTerm}>{def.term} : <Text style={styles.definitionMeaning}>{def.meaning}</Text></Text>
         </View>
       ))}
 
