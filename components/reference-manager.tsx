@@ -67,11 +67,53 @@ export function ReferenceManager({
 
   const BASE_URL = "https://terminator-production-46a6.up.railway.app";
 
-  // Load semua data
+  // Load data definitions ketika modal definisi terbuka
   useEffect(() => {
-    loadAllData();
-  }, []);
+    if (showDefModal) {
+      loadDefinitions();
+    }
+  }, [showDefModal]);
 
+  // Load data regulations ketika modal peraturan terbuka
+  useEffect(() => {
+    if (showRegModal) {
+      loadRegulations();
+    }
+  }, [showRegModal]);
+
+  const loadDefinitions = async () => {
+    setLoading(prev => ({ ...prev, definitions: true }));
+    try {
+      const defRes = await fetch(`${BASE_URL}/api/definition`);
+      if (defRes.ok) {
+        const defData = await defRes.json();
+        setAllDefinitions(Array.isArray(defData.data) ? defData.data : []);
+      }
+    } catch (err) {
+      console.error("Error loading definitions:", err);
+      toast.error("Gagal memuat data definisi");
+    } finally {
+      setLoading(prev => ({ ...prev, definitions: false }));
+    }
+  };
+
+  const loadRegulations = async () => {
+    setLoading(prev => ({ ...prev, regulations: true }));
+    try {
+      const regRes = await fetch(`${BASE_URL}/api/references`);
+      if (regRes.ok) {
+        const regData = await regRes.json();
+        setAllRegulations(Array.isArray(regData.data) ? regData.data : []);
+      }
+    } catch (err) {
+      console.error("Error loading regulations:", err);
+      toast.error("Gagal memuat data peraturan");
+    } finally {
+      setLoading(prev => ({ ...prev, regulations: false }));
+    }
+  };
+
+  // Load semua data (untuk keperluan lain yang mungkin membutuhkan)
   const loadAllData = async () => {
     setLoading(prev => ({ ...prev, definitions: true, regulations: true }));
     try {
@@ -130,7 +172,7 @@ export function ReferenceManager({
       toast.success("Definisi berhasil ditambahkan!");
       setDefForm({ term: "", meaning: "" });
       setShowDefForm(false);
-      await loadAllData(); // Reload data
+      await loadDefinitions(); // Reload data definitions saja
     } catch (err) {
       toast.error("Gagal menambahkan definisi.");
       console.error(err);
@@ -157,7 +199,7 @@ export function ReferenceManager({
       toast.success("Definisi berhasil diupdate!");
       setEditingDefinition(null);
       setDefForm({ term: "", meaning: "" });
-      await loadAllData(); // Reload data
+      await loadDefinitions(); // Reload data definitions saja
     } catch (err) {
       toast.error("Gagal mengupdate definisi.");
       console.error(err);
@@ -181,7 +223,7 @@ export function ReferenceManager({
       
       toast.success("Definisi berhasil dihapus!");
       setDeleteDefinitionId(null);
-      await loadAllData(); // Reload data
+      await loadDefinitions(); // Reload data definitions saja
     } catch (err) {
       toast.error("Gagal menghapus definisi.");
       console.error(err);
@@ -206,7 +248,7 @@ export function ReferenceManager({
       toast.success("Peraturan berhasil ditambahkan!");
       setRegForm({ title: "", year: "", number: "", text: "", url: "" });
       setShowRegForm(false);
-      await loadAllData(); // Reload data
+      await loadRegulations(); // Reload data regulations saja
     } catch (err) {
       toast.error("Gagal menambahkan peraturan.");
       console.error(err);
@@ -230,7 +272,7 @@ export function ReferenceManager({
       
       toast.success("Peraturan berhasil dihapus!");
       setDeleteRegulationId(null);
-      await loadAllData(); // Reload data
+      await loadRegulations(); // Reload data regulations saja
     } catch (err) {
       toast.error("Gagal menghapus peraturan.");
       console.error(err);
@@ -262,6 +304,22 @@ export function ReferenceManager({
     setEditingDefinition(null);
     setShowDefForm(true);
     setShowDefModal(false); // Tutup modal pencarian
+  };
+
+  // Fungsi untuk membuka modal definisi dengan load data
+  const handleOpenDefModal = () => {
+    setShowDefModal(true);
+    if (allDefinitions.length === 0) {
+      loadDefinitions();
+    }
+  };
+
+  // Fungsi untuk membuka modal peraturan dengan load data
+  const handleOpenRegModal = () => {
+    setShowRegModal(true);
+    if (allRegulations.length === 0) {
+      loadRegulations();
+    }
   };
 
   // ========== REFERENCE MANAGEMENT ==========
@@ -412,7 +470,7 @@ export function ReferenceManager({
       {/* Tombol Pilih Referensi */}
       <div className="grid grid-cols-2 gap-3">
         <Button
-          onClick={() => setShowDefModal(true)}
+          onClick={handleOpenDefModal}
           variant="outline"
           className="h-16 flex flex-col gap-1 border-[#DB8928] text-[#DB8928] hover:bg-[#DB8928]/10 relative"
         >
@@ -429,7 +487,7 @@ export function ReferenceManager({
         </Button>
 
         <Button
-          onClick={() => setShowRegModal(true)}
+          onClick={handleOpenRegModal}
           variant="outline"
           className="h-16 flex flex-col gap-1 border-[#DB8928] text-[#DB8928] hover:bg-[#DB8928]/10 relative"
         >
@@ -642,7 +700,7 @@ export function ReferenceManager({
               onChange={(e) => setRegForm({ ...regForm, text: e.target.value })}
               required
               disabled={loading.createRegulation}
-              className="min-h-[100px] border-[#A4A4A4] focus:border-[#DB8928]"
+              className="min-h-[100px] max-h-[200px] overflow-scroll border-[#A4A4A4] focus:border-[#DB8928]"
             />
             <Input
               placeholder="URL Peraturan (opsional)"

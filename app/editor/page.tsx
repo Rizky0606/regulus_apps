@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { User, Edit, Plus, Search } from "lucide-react";
 import Image from "next/image";
 import LogoLPS from "@/assets/logo/logo-lps.png";
+import { Textarea } from "@/components/ui/textarea";
 
 // Define types untuk PDF content
 interface PdfTextItem {
@@ -81,7 +82,7 @@ interface AutoReferenceModalProps {
   onEditRegulation: (regulation: Regulation) => void;
 }
 
-// Modal untuk Auto Reference menggunakan Dialog
+// Modal untuk Auto Reference menggunakan Dialog - RESPONSIVE
 const AutoReferenceModal: React.FC<AutoReferenceModalProps> = ({
   isOpen,
   onClose,
@@ -103,61 +104,11 @@ const AutoReferenceModal: React.FC<AutoReferenceModalProps> = ({
       if (result.data && Array.isArray(result.data)) {
         setRegulations(result.data);
         setFilteredRegulations(result.data);
-      } else {
-        // Fallback data jika response tidak sesuai
-        const fallbackData: Regulation[] = [
-          {
-            id: "1",
-            title: "Undang-Undang Ketenagakerjaan",
-            year: "2003",
-            number: "13",
-            text: "Undang-Undang No. 13 Tahun 2003 tentang Ketenagakerjaan",
-            url: "https://peraturan.go.id/uu-13-2003",
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          },
-          {
-            id: "2",
-            title: "Undang-Undang Perseroan Terbatas",
-            year: "2007",
-            number: "40",
-            text: "Undang-Undang No. 40 Tahun 2007 tentang Perseroan Terbatas",
-            url: "https://peraturan.go.id/uu-40-2007",
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          }
-        ];
-        setRegulations(fallbackData);
-        setFilteredRegulations(fallbackData);
       }
     } catch (error) {
       console.error('Error fetching regulations:', error);
       toast.error('Gagal memuat daftar peraturan');
       // Fallback data untuk error
-      const fallbackData: Regulation[] = [
-        {
-          id: "1",
-          title: "Undang-Undang Ketenagakerjaan",
-          year: "2003",
-          number: "13",
-          text: "Undang-Undang No. 13 Tahun 2003 tentang Ketenagakerjaan",
-          url: "https://peraturan.go.id/uu-13-2003",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        },
-        {
-          id: "2",
-          title: "Undang-Undang Perseroan Terbatas",
-          year: "2007",
-          number: "40",
-          text: "Undang-Undang No. 40 Tahun 2007 tentang Perseroan Terbatas",
-          url: "https://peraturan.go.id/uu-40-2007",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      ];
-      setRegulations(fallbackData);
-      setFilteredRegulations(fallbackData);
     } finally {
       setLoading(false);
     }
@@ -182,87 +133,69 @@ const AutoReferenceModal: React.FC<AutoReferenceModalProps> = ({
     }
   }, [searchTerm, regulations]);
 
-  const handleSelect = (regulation: Regulation) => {
-    setSelectedRegulation(regulation);
-  };
-
   const handleEdit = (regulation: Regulation) => {
     onEditRegulation(regulation);
   };
 
   // Helper function untuk generate key dari regulation
   const generateRegulationKey = (regulation: Regulation): string => {
-    return `UU${regulation.number}/${regulation.year}`;
-  };
-
-  // Helper function untuk menentukan jenis peraturan berdasarkan title/number
-  const getRegulationType = (regulation: Regulation): string => {
-    if (regulation.title.includes('Undang-Undang')) return 'law';
-    if (regulation.title.includes('Peraturan Pemerintah')) return 'government';
-    if (regulation.title.includes('Peraturan Menteri')) return 'ministerial';
-    if (regulation.title.includes('Peraturan Daerah')) return 'regional';
-    return 'law'; // default
+    return `${regulation.number}/${regulation.year}`;
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
-        <DialogHeader>
-          <DialogTitle>Auto Reference</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="w-[95vw] max-w-4xl max-h-[85vh] flex flex-col sm:w-[90vw] md:w-[80vw] lg:w-[70vw]">
+        <DialogHeader className="px-1 sm:px-4">
+          <DialogTitle className="text-lg sm:text-xl">Auto Reference</DialogTitle>
+          <DialogDescription className="text-sm sm:text-base">
             Pilih peraturan untuk ditambahkan sebagai referensi
           </DialogDescription>
         </DialogHeader>
 
         {/* Search Bar */}
-        <div className="p-4 border-b">
+        <div className="p-3 sm:p-4 border-b">
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-[#A4A4A4]" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#A4A4A4]" />
             <Input
               placeholder="Cari peraturan..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 text-sm sm:text-base"
             />
           </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">
           {loading ? (
             <div className="text-center py-8">
-              <p>Memuat daftar peraturan...</p>
+              <p className="text-sm sm:text-base">Memuat daftar peraturan...</p>
             </div>
           ) : !filteredRegulations || !Array.isArray(filteredRegulations) || filteredRegulations.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-[#A4A4A4]">Tidak ada peraturan ditemukan</p>
+              <p className="text-[#A4A4A4] text-sm sm:text-base">Tidak ada peraturan ditemukan</p>
             </div>
           ) : (
             <div className="space-y-3">
               {filteredRegulations.map((regulation: Regulation) => (
                 <div
                   key={regulation.id}
-                  className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                    selectedRegulation?.id === regulation.id
-                      ? 'border-[#DB8928] bg-[#DB8928]/5'
-                      : 'border-[#E5E5E5] hover:border-[#DB8928]/50'
-                  }`}
-                  onClick={() => handleSelect(regulation)}
+                  className={`p-3 sm:p-4 border rounded-lg transition-colors border-[#E5E5E5] hover:border-[#DB8928]/50 cursor-pointer hover:bg-gray-50/50`}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="px-2 py-1 bg-[#282828] text-white text-xs rounded">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2">
+                        <span className="px-2 py-1 bg-[#282828] text-white text-xs rounded w-fit">
                           {generateRegulationKey(regulation)}
                         </span>
                         <span className="text-xs text-[#A4A4A4]">
-                          {getRegulationType(regulation)} • {regulation.year}
+                          {regulation.year}
                         </span>
                       </div>
-                      <h3 className="text-sm font-semibold text-[#282828] mb-1">
+                      <h3 className="text-sm font-semibold text-[#282828] mb-1 line-clamp-2">
                         {regulation.title}
                       </h3>
-                      <p className="text-sm text-[#282828]">
+                      <p className="text-sm text-[#282828] line-clamp-2">
                         {regulation.text}
                       </p>
                       {regulation.url && (
@@ -278,7 +211,7 @@ const AutoReferenceModal: React.FC<AutoReferenceModalProps> = ({
                         e.stopPropagation();
                         handleEdit(regulation);
                       }}
-                      className="h-8 w-8 flex-shrink-0"
+                      className="h-8 w-8 flex-shrink-0 self-end sm:self-start"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -290,12 +223,13 @@ const AutoReferenceModal: React.FC<AutoReferenceModalProps> = ({
         </div>
 
         {/* Footer */}
-        <DialogFooter className="flex justify-between items-center">
+        <DialogFooter className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2 p-3 sm:p-4 border-t">
           <Button
             variant="outline"
             onClick={onClose}
+            className="w-full sm:w-auto"
           >
-            Batal
+            Tutup
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -303,7 +237,7 @@ const AutoReferenceModal: React.FC<AutoReferenceModalProps> = ({
   );
 };
 
-// Modal untuk Edit Regulation
+// Modal untuk Edit Regulation - RESPONSIVE
 interface EditRegulationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -372,15 +306,15 @@ const EditRegulationModal: React.FC<EditRegulationModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>Edit Peraturan</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="w-[95vw] max-w-2xl max-h-[90vh] overflow-y-auto sm:w-[90vw] md:w-[80vw]">
+        <DialogHeader className="px-1 sm:px-4">
+          <DialogTitle className="text-lg sm:text-xl">Edit Peraturan</DialogTitle>
+          <DialogDescription className="text-sm sm:text-base">
             Edit detail peraturan yang dipilih
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4 px-1 sm:px-4">
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium text-[#282828] mb-2 block">
@@ -391,10 +325,11 @@ const EditRegulationModal: React.FC<EditRegulationModalProps> = ({
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 placeholder="Contoh: Undang-Undang Ketenagakerjaan"
                 required
+                className="text-sm sm:text-base"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
                 <label className="text-sm font-medium text-[#282828] mb-2 block">
                   Tahun
@@ -406,6 +341,7 @@ const EditRegulationModal: React.FC<EditRegulationModalProps> = ({
                   min="1900"
                   max="2100"
                   required
+                  className="text-sm sm:text-base"
                 />
               </div>
 
@@ -418,6 +354,7 @@ const EditRegulationModal: React.FC<EditRegulationModalProps> = ({
                   onChange={(e) => setFormData({ ...formData, number: e.target.value })}
                   placeholder="Contoh: 13"
                   required
+                  className="text-sm sm:text-base"
                 />
               </div>
             </div>
@@ -426,7 +363,8 @@ const EditRegulationModal: React.FC<EditRegulationModalProps> = ({
               <label className="text-sm font-medium text-[#282828] mb-2 block">
                 Teks Peraturan
               </label>
-              <Input
+              <Textarea
+                className="min-h-[100px] max-h-[200px] overflow-auto text-sm sm:text-base"
                 value={formData.text}
                 onChange={(e) => setFormData({ ...formData, text: e.target.value })}
                 placeholder="Contoh: Undang-Undang No. 13 Tahun 2003 tentang Ketenagakerjaan"
@@ -443,22 +381,24 @@ const EditRegulationModal: React.FC<EditRegulationModalProps> = ({
                 onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                 placeholder="https://peraturan.go.id/uu-13-2003"
                 type="url"
+                className="text-sm sm:text-base"
               />
             </div>
           </div>
 
-          <DialogFooter className="mt-6">
+          <DialogFooter className="flex flex-col sm:flex-row gap-2 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
+              className="w-full sm:w-auto order-2 sm:order-1"
             >
               Batal
             </Button>
             <Button
               type="submit"
               disabled={saving}
-              className="bg-[#DB8928] hover:bg-[#DB8928]/90 text-white"
+              className="w-full sm:w-auto bg-[#DB8928] hover:bg-[#DB8928]/90 text-white order-1 sm:order-2"
             >
               {saving ? 'Menyimpan...' : 'Simpan Perubahan'}
             </Button>
@@ -865,29 +805,29 @@ export default function EditorPage() {
       {/* Header */}
       <header className="bg-white border-b border-[#A4A4A4] shadow-sm">
         <div className="max-w-full">
-          <div className="px-6 py-3">
+          <div className="px-4 sm:px-6 py-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 sm:gap-4">
                 <Link href="/">
-                  <div className="bg-white rounded-lg border border-[#A4A4A4] shadow-sm p-3">
+                  <div className="bg-white rounded-lg border border-[#A4A4A4] shadow-sm p-2 sm:p-3">
                     <Image
                       src={LogoLPS}
                       alt="LPS Logo"
-                      width={120}
-                      height={40}
+                      width={100}
+                      height={35}
                       className="object-contain"
                       style={{
-                        width: "120px",
-                        height: "40px",
-                        minWidth: "120px",
-                        minHeight: "40px",
+                        width: "100px",
+                        height: "35px",
+                        minWidth: "100px",
+                        minHeight: "35px",
                       }}
                     />
                   </div>
                 </Link>
-                <div className="h-8 w-px bg-[#A4A4A4]"></div>
+                <div className="h-6 sm:h-8 w-px bg-[#A4A4A4]"></div>
                 <div className="flex flex-col">
-                  <h1 className="text-xl font-bold text-[#282828] leading-tight">
+                  <h1 className="text-lg sm:text-xl font-bold text-[#282828] leading-tight">
                     LD 1.0 - Aplikasi Penyusunan Peraturan
                   </h1>
                   <p className="text-xs text-[#A4A4A4] leading-tight">
@@ -895,8 +835,8 @@ export default function EditorPage() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <div className="text-right hidden sm:block">
                     <p className="text-sm font-semibold text-[#282828]">
                       Putri Amalia
@@ -904,10 +844,10 @@ export default function EditorPage() {
                     <p className="text-xs text-[#A4A4A4]">Staf Pengembangan</p>
                   </div>
                   <div className="relative">
-                    <div className="w-8 h-8 bg-gradient-to-br from-[#DB8928] to-[#DB8928]/80 rounded-full flex items-center justify-center shadow-sm">
-                      <User className="w-4 h-4 text-white" />
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-to-br from-[#DB8928] to-[#DB8928]/80 rounded-full flex items-center justify-center shadow-sm">
+                      <User className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                     </div>
-                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+                    <div className="absolute -bottom-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full border-2 border-white"></div>
                   </div>
                 </div>
               </div>
@@ -916,16 +856,18 @@ export default function EditorPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-screen-2xl py-6">
+      <main className="mx-auto max-w-screen-2xl py-4 sm:py-6 px-3 sm:px-6">
         {/* Toolbar dan Controls */}
-        <div className="mb-3 flex justify-between items-center gap-2">
+        <div className="mb-3 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-2">
           <EditorToolbar
             onInsert={(snippet) => setInsertSnippet(snippet)}
             onFixTypos={handleCheckTypos}
           />
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 justify-end">
             <Link href="/">
-              <Button variant="outline">Buka</Button>
+              <Button variant="outline" size="sm" className="text-xs sm:text-sm">
+                Buka
+              </Button>
             </Link>
             <Button
               onClick={() => {
@@ -934,7 +876,8 @@ export default function EditorPage() {
                 setSavedAt(new Date());
                 toast.success("Draft berhasil disimpan.");
               }}
-              className="bg-[#DB8928] hover:bg-[#DB8928]/90 text-white"
+              className="bg-[#DB8928] hover:bg-[#DB8928]/90 text-white text-xs sm:text-sm"
+              size="sm"
             >
               Simpan
             </Button>
@@ -950,34 +893,37 @@ export default function EditorPage() {
                 a.download = "draft.html";
                 a.click();
               }}
+              size="sm"
+              className="text-xs sm:text-sm"
             >
               Ekspor HTML
             </Button>
 
             <Button
               variant="default"
-              className="bg-[#282828] hover:bg-[#282828]/90 text-white"
+              className="bg-[#282828] hover:bg-[#282828]/90 text-white text-xs sm:text-sm"
               onClick={handleExportPDF}
+              size="sm"
             >
               Ekspor PDF
             </Button>
 
-            <Input placeholder="Cari..." className="w-40" />
+            <Input placeholder="Cari..." className="w-28 sm:w-40 text-xs sm:text-sm" />
           </div>
         </div>
 
         {/* Layout utama */}
-        <div className="grid gap-4 md:grid-cols-12">
+        <div className="grid gap-3 sm:gap-4 md:grid-cols-12">
           {/* Struktur Dokumen */}
-          <Card className="md:col-span-3 p-4 bg-gradient-to-b from-[#F7F7F7] to-white">
-            <h2 className="font-semibold text-lg mb-3 text-[#282828]">
+          <Card className="md:col-span-3 p-3 sm:p-4 bg-gradient-to-b from-[#F7F7F7] to-white">
+            <h2 className="font-semibold text-base sm:text-lg mb-3 text-[#282828]">
               📘 Struktur Dokumen
             </h2>
             <OutlineTree nodes={outline} />
-            <div className="mt-6 space-y-3">
+            <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
               <Button
                 variant="secondary"
-                className="w-full bg-[#DB8928]/10 text-[#DB8928] hover:bg-[#DB8928]/20 border-[#DB8928]"
+                className="w-full bg-[#DB8928]/10 text-[#DB8928] hover:bg-[#DB8928]/20 border-[#DB8928] text-xs sm:text-sm"
                 onClick={() => setAutoReferenceModalOpen(true)}
               >
                 Auto Referencing
@@ -986,16 +932,22 @@ export default function EditorPage() {
           </Card>
 
           {/* Editor */}
-          <Card className="md:col-span-6 p-4" ref={editorRef}>
+          <Card className="md:col-span-6 p-3 sm:p-4" ref={editorRef}>
             <style jsx global>{`
               .ql-editor {
                 color: #282828 !important;
+                font-size: 14px;
               }
               .ql-container .ql-editor p,
               .ql-container .ql-editor h1,
               .ql-container .ql-editor h2,
               .ql-container .ql-editor h3 {
                 color: #282828 !important;
+              }
+              @media (min-width: 640px) {
+                .ql-editor {
+                  font-size: 16px;
+                }
               }
             `}</style>
             <RichEditor
@@ -1013,9 +965,9 @@ export default function EditorPage() {
           </Card>
 
           {/* Panel Referensi */}
-          <div className="md:col-span-3 space-y-4">
+          <div className="md:col-span-3 space-y-3 sm:space-y-4">
             {/* Reference Manager untuk PDF */}
-            <Card className="p-4">
+            <Card className="p-3 sm:p-4">
               <ReferenceManager
                 selectedReferences={selectedReferences}
                 onReferencesChange={setSelectedReferences}
