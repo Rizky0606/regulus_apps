@@ -10,16 +10,16 @@ import { TypoModal } from "@/components/typo-modal";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { runBasicTypoFixes } from "@/lib/typo";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { pdf } from "@react-pdf/renderer";
 import { MyDocument } from "@/components/pdf-document";
 import { toast } from "sonner";
-import { User } from "lucide-react";
+import { User, Edit, Plus, Search } from "lucide-react";
 import Image from "next/image";
 import LogoLPS from "@/assets/logo/logo-lps.png";
-import { SelectedReferences } from "@/types/references";
 
 // Define types untuk PDF content
 interface PdfTextItem {
@@ -50,6 +50,425 @@ interface TypoCorrection {
   referencess: string;
 }
 
+// Types untuk modal auto reference - SESUAI RESPONSE API BARU
+interface Regulation {
+  id: string;
+  title: string;
+  year: string;
+  number: string;
+  text: string;
+  url: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ApiResponse {
+  meta: {
+    message: string;
+  };
+  data: Regulation[];
+}
+
+interface SelectedReferences {
+  regulations: Regulation[];
+  definitions: any[];
+}
+
+interface AutoReferenceModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelectRegulation: (regulation: Regulation) => void;
+  onEditRegulation: (regulation: Regulation) => void;
+}
+
+// Modal untuk Auto Reference menggunakan Dialog
+const AutoReferenceModal: React.FC<AutoReferenceModalProps> = ({
+  isOpen,
+  onClose,
+  onSelectRegulation,
+  onEditRegulation,
+}) => {
+  const [regulations, setRegulations] = useState<Regulation[]>([]);
+  const [filteredRegulations, setFilteredRegulations] = useState<Regulation[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [selectedRegulation, setSelectedRegulation] = useState<Regulation | null>(null);
+
+  const fetchRegulations = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('https://terminator-production-46a6.up.railway.app/api/references');
+      const result: ApiResponse = await response.json();
+      
+      if (result.data && Array.isArray(result.data)) {
+        setRegulations(result.data);
+        setFilteredRegulations(result.data);
+      } else {
+        // Fallback data jika response tidak sesuai
+        const fallbackData: Regulation[] = [
+          {
+            id: "1",
+            title: "Undang-Undang Ketenagakerjaan",
+            year: "2003",
+            number: "13",
+            text: "Undang-Undang No. 13 Tahun 2003 tentang Ketenagakerjaan",
+            url: "https://peraturan.go.id/uu-13-2003",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          },
+          {
+            id: "2",
+            title: "Undang-Undang Perseroan Terbatas",
+            year: "2007",
+            number: "40",
+            text: "Undang-Undang No. 40 Tahun 2007 tentang Perseroan Terbatas",
+            url: "https://peraturan.go.id/uu-40-2007",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }
+        ];
+        setRegulations(fallbackData);
+        setFilteredRegulations(fallbackData);
+      }
+    } catch (error) {
+      console.error('Error fetching regulations:', error);
+      toast.error('Gagal memuat daftar peraturan');
+      // Fallback data untuk error
+      const fallbackData: Regulation[] = [
+        {
+          id: "1",
+          title: "Undang-Undang Ketenagakerjaan",
+          year: "2003",
+          number: "13",
+          text: "Undang-Undang No. 13 Tahun 2003 tentang Ketenagakerjaan",
+          url: "https://peraturan.go.id/uu-13-2003",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        },
+        {
+          id: "2",
+          title: "Undang-Undang Perseroan Terbatas",
+          year: "2007",
+          number: "40",
+          text: "Undang-Undang No. 40 Tahun 2007 tentang Perseroan Terbatas",
+          url: "https://peraturan.go.id/uu-40-2007",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }
+      ];
+      setRegulations(fallbackData);
+      setFilteredRegulations(fallbackData);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchRegulations();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (searchTerm) {
+      const filtered = regulations.filter(regulation =>
+        regulation.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        regulation.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        regulation.number.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredRegulations(filtered);
+    } else {
+      setFilteredRegulations(regulations);
+    }
+  }, [searchTerm, regulations]);
+
+  const handleSelect = (regulation: Regulation) => {
+    setSelectedRegulation(regulation);
+  };
+
+  const handleEdit = (regulation: Regulation) => {
+    onEditRegulation(regulation);
+  };
+
+  // Helper function untuk generate key dari regulation
+  const generateRegulationKey = (regulation: Regulation): string => {
+    return `UU${regulation.number}/${regulation.year}`;
+  };
+
+  // Helper function untuk menentukan jenis peraturan berdasarkan title/number
+  const getRegulationType = (regulation: Regulation): string => {
+    if (regulation.title.includes('Undang-Undang')) return 'law';
+    if (regulation.title.includes('Peraturan Pemerintah')) return 'government';
+    if (regulation.title.includes('Peraturan Menteri')) return 'ministerial';
+    if (regulation.title.includes('Peraturan Daerah')) return 'regional';
+    return 'law'; // default
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+        <DialogHeader>
+          <DialogTitle>Auto Reference</DialogTitle>
+          <DialogDescription>
+            Pilih peraturan untuk ditambahkan sebagai referensi
+          </DialogDescription>
+        </DialogHeader>
+
+        {/* Search Bar */}
+        <div className="p-4 border-b">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-[#A4A4A4]" />
+            <Input
+              placeholder="Cari peraturan..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6">
+          {loading ? (
+            <div className="text-center py-8">
+              <p>Memuat daftar peraturan...</p>
+            </div>
+          ) : !filteredRegulations || !Array.isArray(filteredRegulations) || filteredRegulations.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-[#A4A4A4]">Tidak ada peraturan ditemukan</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {filteredRegulations.map((regulation: Regulation) => (
+                <div
+                  key={regulation.id}
+                  className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                    selectedRegulation?.id === regulation.id
+                      ? 'border-[#DB8928] bg-[#DB8928]/5'
+                      : 'border-[#E5E5E5] hover:border-[#DB8928]/50'
+                  }`}
+                  onClick={() => handleSelect(regulation)}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="px-2 py-1 bg-[#282828] text-white text-xs rounded">
+                          {generateRegulationKey(regulation)}
+                        </span>
+                        <span className="text-xs text-[#A4A4A4]">
+                          {getRegulationType(regulation)} • {regulation.year}
+                        </span>
+                      </div>
+                      <h3 className="text-sm font-semibold text-[#282828] mb-1">
+                        {regulation.title}
+                      </h3>
+                      <p className="text-sm text-[#282828]">
+                        {regulation.text}
+                      </p>
+                      {regulation.url && (
+                        <p className="text-xs text-[#A4A4A4] mt-1 truncate">
+                          {regulation.url}
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(regulation);
+                      }}
+                      className="h-8 w-8 flex-shrink-0"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <DialogFooter className="flex justify-between items-center">
+          <Button
+            variant="outline"
+            onClick={onClose}
+          >
+            Batal
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+// Modal untuk Edit Regulation
+interface EditRegulationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  regulation: Regulation | null;
+  onSave: (regulation: Regulation) => void;
+}
+
+const EditRegulationModal: React.FC<EditRegulationModalProps> = ({
+  isOpen,
+  onClose,
+  regulation,
+  onSave,
+}) => {
+  const [formData, setFormData] = useState<Regulation>({
+    id: '',
+    title: '',
+    year: new Date().getFullYear().toString(),
+    number: '',
+    text: '',
+    url: '',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  });
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (regulation) {
+      setFormData(regulation);
+    }
+  }, [regulation]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+
+    try {
+      const response = await fetch(`https://terminator-production-46a6.up.railway.app/api/references/${formData.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: formData.title,
+          year: formData.year,
+          number: formData.number,
+          text: formData.text,
+          url: formData.url
+        }),
+      });
+
+      if (response.ok) {
+        const updatedRegulation = await response.json();
+        onSave(updatedRegulation.data || formData);
+        toast.success('Peraturan berhasil diperbarui');
+        onClose();
+      } else {
+        throw new Error('Gagal menyimpan perubahan');
+      }
+    } catch (error) {
+      console.error('Error updating regulation:', error);
+      toast.error('Gagal menyimpan perubahan peraturan');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Edit Peraturan</DialogTitle>
+          <DialogDescription>
+            Edit detail peraturan yang dipilih
+          </DialogDescription>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-[#282828] mb-2 block">
+                Judul Peraturan
+              </label>
+              <Input
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                placeholder="Contoh: Undang-Undang Ketenagakerjaan"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-[#282828] mb-2 block">
+                  Tahun
+                </label>
+                <Input
+                  value={formData.year}
+                  onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                  type="number"
+                  min="1900"
+                  max="2100"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-[#282828] mb-2 block">
+                  Nomor
+                </label>
+                <Input
+                  value={formData.number}
+                  onChange={(e) => setFormData({ ...formData, number: e.target.value })}
+                  placeholder="Contoh: 13"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-[#282828] mb-2 block">
+                Teks Peraturan
+              </label>
+              <Input
+                value={formData.text}
+                onChange={(e) => setFormData({ ...formData, text: e.target.value })}
+                placeholder="Contoh: Undang-Undang No. 13 Tahun 2003 tentang Ketenagakerjaan"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-[#282828] mb-2 block">
+                URL
+              </label>
+              <Input
+                value={formData.url}
+                onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                placeholder="https://peraturan.go.id/uu-13-2003"
+                type="url"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="mt-6">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+            >
+              Batal
+            </Button>
+            <Button
+              type="submit"
+              disabled={saving}
+              className="bg-[#DB8928] hover:bg-[#DB8928]/90 text-white"
+            >
+              {saving ? 'Menyimpan...' : 'Simpan Perubahan'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 export default function EditorPage() {
   const searchParams = useSearchParams();
   const jenis = searchParams.get("jenis") || "Dokumen Regulasi";
@@ -74,11 +493,10 @@ export default function EditorPage() {
   const [fixToggle, setFixToggle] = useState(false);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [activeReference, setActiveReference] = useState<any | null>(null);
-  const [selectedReferences, setSelectedReferences] =
-    useState<SelectedReferences>({
-      regulations: [],
-      definitions: [],
-    });
+  const [selectedReferences, setSelectedReferences] = useState<SelectedReferences>({
+    regulations: [],
+    definitions: [],
+  });
   const [editorContent, setEditorContent] = useState("");
 
   // State untuk modal typo
@@ -87,6 +505,11 @@ export default function EditorPage() {
     originalText: string;
     corrections: TypoCorrection[];
   } | null>(null);
+
+  // State untuk modal auto reference
+  const [autoReferenceModalOpen, setAutoReferenceModalOpen] = useState(false);
+  const [editRegulationModalOpen, setEditRegulationModalOpen] = useState(false);
+  const [selectedRegulation, setSelectedRegulation] = useState<Regulation | null>(null);
 
   const editorRef = useRef<HTMLDivElement | null>(null);
 
@@ -107,20 +530,17 @@ export default function EditorPage() {
   }, [selectedReferences]);
 
   const handleAddReference = async (newRef: any) => {
-    // Fungsi ini untuk ReferencePanel yang lama, bisa dipertahankan untuk kompatibilitas
     toast.info("Gunakan Reference Manager untuk memilih referensi PDF");
   };
 
   // Fungsi untuk handle cek typo dari toolbar
   const handleCheckTypos = () => {
-    // Trigger melalui custom event di RichEditor
     const event = new CustomEvent("triggerTypoCheck");
     window.dispatchEvent(event);
   };
 
   // Fungsi untuk mengganti teks di editor
   const handleReplaceText = (original: string, replacement: string) => {
-    // Trigger melalui custom event di RichEditor
     const event = new CustomEvent("replaceText", {
       detail: { original, replacement },
     });
@@ -141,6 +561,31 @@ export default function EditorPage() {
     };
   }, []);
 
+  // Fungsi untuk handle select regulation
+  const handleSelectRegulation = (regulation: Regulation) => {
+    setSelectedReferences((prev: SelectedReferences) => ({
+      ...prev,
+      regulations: [...prev.regulations, regulation]
+    }));
+    toast.success(`Referensi ${regulation.title} berhasil ditambahkan`);
+  };
+
+  // Fungsi untuk handle edit regulation
+  const handleEditRegulation = (regulation: Regulation) => {
+    setSelectedRegulation(regulation);
+    setEditRegulationModalOpen(true);
+  };
+
+  // Fungsi untuk handle save regulation setelah edit
+  const handleSaveRegulation = (updatedRegulation: Regulation) => {
+    setSelectedReferences((prev: SelectedReferences) => ({
+      ...prev,
+      regulations: prev.regulations.map((ref: Regulation) => 
+        ref.id === updatedRegulation.id ? updatedRegulation : ref
+      )
+    }));
+  };
+
   // Fungsi untuk detect alignment dari element HTML
   const detectAlignment = (
     element: HTMLElement
@@ -148,7 +593,6 @@ export default function EditorPage() {
     const style = element.getAttribute("style") || "";
     const classList = element.classList;
 
-    // Check Quill alignment classes
     if (classList.contains("ql-align-right")) {
       return "right";
     } else if (classList.contains("ql-align-center")) {
@@ -157,7 +601,6 @@ export default function EditorPage() {
       return "justify";
     }
 
-    // Check inline styles
     if (style.includes("text-align: right")) {
       return "right";
     } else if (style.includes("text-align: center")) {
@@ -166,7 +609,7 @@ export default function EditorPage() {
       return "justify";
     }
 
-    return "left"; // default
+    return "left";
   };
 
   // Fungsi untuk detect heading level dari tag HTML
@@ -535,6 +978,7 @@ export default function EditorPage() {
               <Button
                 variant="secondary"
                 className="w-full bg-[#DB8928]/10 text-[#DB8928] hover:bg-[#DB8928]/20 border-[#DB8928]"
+                onClick={() => setAutoReferenceModalOpen(true)}
               >
                 Auto Referencing
               </Button>
@@ -577,14 +1021,6 @@ export default function EditorPage() {
                 onReferencesChange={setSelectedReferences}
               />
             </Card>
-
-            {/* Reference Panel lama (opsional) */}
-            {/* <Card className="p-4">
-              <ReferencePanel
-                reference={activeReference}
-                onAddReference={handleAddReference}
-              />
-            </Card> */}
           </div>
         </div>
 
@@ -595,6 +1031,22 @@ export default function EditorPage() {
           originalText={typoData?.originalText || ""}
           corrections={typoData?.corrections || []}
           onReplace={handleReplaceText}
+        />
+
+        {/* Modal untuk Auto Reference */}
+        <AutoReferenceModal
+          isOpen={autoReferenceModalOpen}
+          onClose={() => setAutoReferenceModalOpen(false)}
+          onSelectRegulation={handleSelectRegulation}
+          onEditRegulation={handleEditRegulation}
+        />
+
+        {/* Modal untuk Edit Regulation */}
+        <EditRegulationModal
+          isOpen={editRegulationModalOpen}
+          onClose={() => setEditRegulationModalOpen(false)}
+          regulation={selectedRegulation}
+          onSave={handleSaveRegulation}
         />
       </main>
     </div>

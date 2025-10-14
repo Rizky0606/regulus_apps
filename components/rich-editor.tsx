@@ -48,7 +48,7 @@ export function RichEditor({
   const checkTypos = async (text: string): Promise<TypoCorrection[]> => {
     try {
       const response = await fetch(
-        "https://terminator-production-46a6.up.railway.app/api/check_correction",
+        "https://terminator-production-46a6.up.railway.app/api/check-correction",
         {
           method: "POST",
           headers: {
