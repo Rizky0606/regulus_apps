@@ -959,9 +959,9 @@ export default function EditorPage() {
               savedAt={savedAt}
               onChange={handleEditorChange}
             />
-            <div className="mt-3 text-xs text-[#A4A4A4] border-t border-[#F7F7F7] pt-2">
+            {/* <div className="mt-3 text-xs text-[#A4A4A4] border-t border-[#F7F7F7] pt-2">
               ✏️ Draft terakhir disimpan otomatis 2 menit lalu.
-            </div>
+            </div> */}
           </Card>
 
           {/* Panel Referensi */}

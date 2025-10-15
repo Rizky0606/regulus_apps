@@ -365,15 +365,15 @@ export function RichEditor({
     };
   }, []);
 
-  const savedMsg = useMemo(() => {
-    if (!lastSavedAt) return "Menunggu perubahan…";
-    return `Draft terakhir disimpan otomatis pada ${lastSavedAt.toLocaleTimeString(
-      "id-ID",
-      {
-        hour12: false,
-      }
-    )}.`;
-  }, [lastSavedAt]);
+  // const savedMsg = useMemo(() => {
+    // if (!lastSavedAt) return "Menunggu perubahan…";
+    // return `Draft terakhir disimpan otomatis pada ${lastSavedAt.toLocaleTimeString(
+    //   "id-ID",
+    //   {
+    //     hour12: false,
+    //   }
+    // )}.`;
+  // }, [lastSavedAt]);
 
   return (
     <div ref={wrapperRef} className="grid gap-3">
@@ -423,7 +423,7 @@ export function RichEditor({
         />
       </div>
 
-      <p className="text-xs text-muted-foreground">{savedMsg}</p>
+      {/* <p className="text-xs text-muted-foreground">{savedMsg}</p> */}
     </div>
   );
 }
